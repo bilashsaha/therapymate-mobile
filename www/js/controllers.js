@@ -35,13 +35,13 @@ angular.module('starter.controllers', [])
 
       $http({
           method: 'POST',
-          url: 'http://192.168.1.109:3003/api/app/auth/sign_in',
+          url: 'http://192.168.1.109:3003/api/app/sessions.json',
           data: $httpParamSerializerJQLike($scope.loginData),
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       }).then(
           function(res) {
               console.log('succes !', res.data);
-              $scope.closeLogin();
+
           },
           function(err) {
               console.log('error...', err);
@@ -66,4 +66,5 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+
 });
