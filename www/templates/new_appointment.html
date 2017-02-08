@@ -43,9 +43,8 @@
         </label>
         <label class="item item-select item-input">
           <span class="input-label">Frequency</span>
-          <select   ng-model="appointment.appointment.frequency">
+          <select ng-model="appointment.appointment.frequency" ng-options="frequency for frequency in newAppointmentSetting.frequencies">
             <option value="">Please select</option>
-            <option ng-repeat="frequency in newAppointmentSetting.frequencies" ng-value="frequency">{{frequency}}</option>
           </select>
         </label>
 

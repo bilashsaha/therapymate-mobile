@@ -1,5 +1,5 @@
 <ion-view view-title="Appointments">
-  <ion-content>
+  <ion-content on-swipe-left="nextDate()" on-swipe-right="prevDate()" >
 
     <div class="row header">
       <span class="ion-arrow-left-a col" style="cursor: pointer" ng-click="prevDate()"></span>

@@ -82,7 +82,7 @@ var app = angular.module('starter', ['ionic', 'starter.controllers', 'appointmen
                 url: '/appointments/:id',
                 views: {
                     'menuContent': {
-                        templateUrl: 'templates/new_appointment.html',
+                        templateUrl: 'templates/edit_appointment.html',
                         controller: 'EditAppointmentCtrl'
                     }
                 }

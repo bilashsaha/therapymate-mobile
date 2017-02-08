@@ -70,6 +70,10 @@ angular.module('appointment.controllers', [])
         var access = JSON.parse(localStorage.getItem('access'));
         $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?token="+access.token+"&email="+access.email).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
+                response.data.appointment.start_at = new Date(response.data.appointment.start_at);
+                response.data.appointment.start_time = new Date(response.data.appointment.start_time);
+                response.data.appointment.end_time = new Date(response.data.appointment.end_time);
+                response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
                 $scope.appointment = {"appointment": response.data.appointment};
             },
             function(err) {
@@ -80,12 +84,8 @@ angular.module('appointment.controllers', [])
 
         $scope.updateAppointment = function(){
             var access = JSON.parse(localStorage.getItem('access'));
-            $http({
-                method: 'PUT',
-                url: apiHost+'api/app/appointments.json?token='+access.token+"&email="+access.email,
-                data: $httpParamSerializerJQLike($scope.appointment),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(
+            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?token="+access.token+"&email="+access.email,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            .then(
                 function(res) {
                     if(res.data){
                         $state.go('app.appointments');
