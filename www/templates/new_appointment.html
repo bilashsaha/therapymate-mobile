@@ -1,0 +1,72 @@
+  <ion-header-bar>
+    <h1 class="title">New Appointment</h1>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="createAppointment()">
+      <div class="list">
+        <label class="item item-select item-input">
+          <span class="input-label">Clinician</span>
+          <select ng-model="appointment.appointment.clinician_id" ng-options="clinician.id as clinician.name for clinician in newAppointmentSetting.clinicians">
+            <option value="">Please select</option>
+          </select>
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Location</span>
+          <select ng-model="appointment.appointment.location_id" ng-options="location.id as location.name for location in newAppointmentSetting.locations">
+            <option value="">Please select</option>
+          </select>
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Session Type</span>
+          <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes">
+            <option value="">Please select</option>
+            <option ng-repeat="service_code in newAppointmentSetting.service_codes" ng-value="service_code.id">{{service_code.description}}</option>
+          </select>
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Patient</span>
+          <select ng-model="appointment.appointment.patient_id" ng-options="patient.id as patient.name for patient in newAppointmentSetting.patients">
+            <option value="">Please select</option>
+          </select>
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Date</span>
+          <input type="date" ng-model="appointment.appointment.start_at">
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Time</span>
+          <input type="time" ng-model="appointment.appointment.start_time">
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Until</span>
+          <input type="time" ng-model="appointment.appointment.end_time">
+        </label>
+        <label class="item item-select item-input">
+          <span class="input-label">Frequency</span>
+          <select   ng-model="appointment.appointment.frequency">
+            <option value="">Please select</option>
+            <option ng-repeat="frequency in newAppointmentSetting.frequencies" ng-value="frequency">{{frequency}}</option>
+          </select>
+        </label>
+
+
+        <label ng-if="appointment.appointment.frequency != 'One Time' && appointment.appointment.frequency != null && appointment.appointment.frequency != ''" class="item item-select item-input">
+          <span class="input-label">Scheduled until</span>
+          <input type="date" ng-model="appointment.appointment.scheduled_until">
+        </label>
+
+        <label class="item item-checkbox">
+          <input type="checkbox" ng-model="appointment.appointment.email_reminder">
+          Email Reminder
+        </label>
+        <label class="item item-checkbox">
+          <input type="checkbox" ng-model="appointment.appointment.text_reminder">
+          Text Reminder
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Save</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+
