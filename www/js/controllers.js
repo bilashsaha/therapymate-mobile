@@ -11,6 +11,10 @@ angular.module('starter.controllers', [])
         var access = JSON.parse(localStorage.getItem('access'));
         $scope.access = access;
 
+        if(access != null){
+            query_access = "token="+$scope.access.token+"&email="+$scope.access.email;
+        }
+
         if(access == null &&  window.location.href.split("#")[1] != "/app/login"){
             $window.location.href = "#/app/login";
             $window.location.reload()
@@ -19,7 +23,7 @@ angular.module('starter.controllers', [])
         $scope.$on('$ionicView.enter', function(){
             $ionicSideMenuDelegate.canDragContent(false);
         });
-        
+
         $scope.logout = function(){
             localStorage.setItem('access',null);
             $window.location.href = "#/app/login";

@@ -7,8 +7,7 @@ angular.module('appointment.controllers', [])
             $scope.date =  $location.search().date
         }
         $scope.viewbleDate = new Date((Date.parse($scope.date))).toString().split(' ').splice(0,4).join(' ');
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&token="+access.token+"&email="+access.email).then(function (response) {
+        $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&"+query_access).then(function (response) {
             $scope.appointments = response.data.appointments;
         },
         function(err) {
@@ -35,21 +34,19 @@ angular.module('appointment.controllers', [])
 
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
     $scope.appointment = {"appointment": {}};
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost+"api/app/appointments/new.json?token="+access.token+"&email="+access.email).then(function (response) {
+        $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
+        $http.get(apiHost+"api/app/appointments/new.json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
             },
             function(err) {
-                console.log(err);
-                $state.go('app.login');
+                $scope.errorMessageDialog(err);
             }
         );
 
         $scope.createAppointment = function(){
-            var access = JSON.parse(localStorage.getItem('access'));
             $http({
                 method: 'POST',
-                url: apiHost+'api/app/appointments.json?token='+access.token+"&email="+access.email,
+                url: apiHost+'api/app/appointments.json?'+query_access,
                 data: $httpParamSerializerJQLike($scope.appointment),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
@@ -63,11 +60,19 @@ angular.module('appointment.controllers', [])
                 })
 
         };
+        $scope.clinicianChanged = function(selectedClinicianId){
+            $http.get(apiHost+"api/app/appointments/new.json?"+query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
+                    $scope.newAppointmentSetting = response.data;
+                },
+                function(err) {
+                    $scope.errorMessageDialog(err);
+                }
+            );
+        }
 })
 
     .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams) {
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?token="+access.token+"&email="+access.email).then(function (response) {
+        $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
                 response.data.appointment.start_at = new Date(response.data.appointment.start_at);
                 response.data.appointment.start_time = new Date(response.data.appointment.start_time);
@@ -83,7 +88,7 @@ angular.module('appointment.controllers', [])
 
         $scope.updateAppointment = function(){
             var access = JSON.parse(localStorage.getItem('access'));
-            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?token="+access.token+"&email="+access.email,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
             .then(
                 function(res) {
                     if(res.data){

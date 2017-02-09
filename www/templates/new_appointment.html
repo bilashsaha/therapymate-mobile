@@ -6,7 +6,7 @@
       <div class="list">
         <label class="item item-select item-input">
           <span class="input-label">Clinician</span>
-          <select ng-model="appointment.appointment.clinician_id" ng-options="clinician.id as clinician.name for clinician in newAppointmentSetting.clinicians">
+          <select ng-change="clinicianChanged(appointment.appointment.clinician_id)" ng-model="appointment.appointment.clinician_id" ng-options="clinician.id as clinician.name for clinician in newAppointmentSetting.clinicians">
             <option value="">Please select</option>
           </select>
         </label>

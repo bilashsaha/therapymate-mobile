@@ -13,13 +13,13 @@ angular.module('patient.controllers', [])
 
     .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike) {
         $scope.patient = {"patient": {}};
+        $scope.patient.patient.clinician_id = $scope.access.clinician_id;
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
 
 
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost + "api/app/patients/new.json?token=" + access.token + "&email=" + access.email).then(function (response) {
+        $http.get(apiHost + "api/app/patients/new.json?"+query_access).then(function (response) {
                 $scope.newPatientSetting = response.data;
             },
             function (err) {
@@ -29,10 +29,9 @@ angular.module('patient.controllers', [])
         );
 
         $scope.createPatient = function () {
-            var access = JSON.parse(localStorage.getItem('access'));
             $http({
                 method: 'POST',
-                url: apiHost + 'api/app/patients.json?token=' + access.token + "&email=" + access.email,
+                url: apiHost + 'api/app/patients.json?'+query_access,
                 data: $httpParamSerializerJQLike($scope.patient),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
@@ -53,7 +52,7 @@ angular.module('patient.controllers', [])
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
         var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost + "api/app/patients/" + $stateParams.id + ".json?token=" + access.token + "&email=" + access.email).then(function (response) {
+        $http.get(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+query_access).then(function (response) {
                 $scope.newPatientSetting = response.data;
                 response.data.patient.date_of_birth = new Date(response.data.patient.date_of_birth);
                 $scope.patient = {"patient": response.data.patient};
@@ -66,7 +65,7 @@ angular.module('patient.controllers', [])
 
         $scope.updatePatient = function () {
             var access = JSON.parse(localStorage.getItem('access'));
-            $http.put(apiHost + "api/app/patients/" + $stateParams.id + ".json?token=" + access.token + "&email=" + access.email, $httpParamSerializerJQLike($scope.patient), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            $http.put(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+query_access, $httpParamSerializerJQLike($scope.patient), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
                 .then(
                 function (res) {
                     if (res.data) {
