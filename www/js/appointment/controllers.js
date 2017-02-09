@@ -1,5 +1,6 @@
 angular.module('appointment.controllers', [])
    .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
+        $scope.navTitle='<img style="height: 45px" src="img/logo.png" />'
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
         }
@@ -35,6 +36,14 @@ angular.module('appointment.controllers', [])
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
     $scope.appointment = {"appointment": {}};
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
+
+        if (typeof $location.search().date == 'undefined'){
+            $scope.date =  moment(new Date()).format("YYYY-MM-DD")
+        }
+        else{
+            $scope.date =  $location.search().date
+        }
+
         $http.get(apiHost+"api/app/appointments/new.json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
             },
@@ -93,6 +102,9 @@ angular.module('appointment.controllers', [])
                 function(res) {
                     if(res.data){
                         $state.go('app.appointments');
+                        $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&"+query_access).then(function (response) {
+                            $scope.appointments = response.data.appointments;
+                        })
                     }
                 }
             ).catch(function(res){
