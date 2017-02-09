@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $http,$httpParamSerializerJQLike,$state, $ionicSideMenuDelegate) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $http,$httpParamSerializerJQLike,$state, $ionicSideMenuDelegate,$window) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -8,10 +8,32 @@ angular.module('starter.controllers', [])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
   //});
-        $ionicSideMenuDelegate.canDragContent(false);
+        var access = JSON.parse(localStorage.getItem('access'));
+        $scope.access = access;
+
+        if(access == null &&  window.location.href.split("#")[1] != "/app/login"){
+            $window.location.href = "#/app/login";
+            $window.location.reload()
+        }
+
+        $scope.$on('$ionicView.enter', function(){
+            $ionicSideMenuDelegate.canDragContent(false);
+        });
+        
         $scope.logout = function(){
             localStorage.setItem('access',null);
-            $state.go('app.login');
+            $window.location.href = "#/app/login";
+            $window.location.reload()
+        }
+
+        $scope.errorMessageDialog = function(response){
+            if(response.data){
+                alert(response.data.errors.join("\n"));
+            }
+            else{
+                alert("Something went wrong");
+            }
+
         }
 
 

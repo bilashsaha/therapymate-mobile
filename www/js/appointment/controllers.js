@@ -57,11 +57,10 @@ angular.module('appointment.controllers', [])
                     if(res.data){
                         $state.go('app.appointments');
                     }
-                },
-                function(err) {
-                    console.log(err);
                 }
-            );
+            ).catch(function(res){
+                    $scope.errorMessageDialog(res)
+                })
 
         };
 })
@@ -90,11 +89,10 @@ angular.module('appointment.controllers', [])
                     if(res.data){
                         $state.go('app.appointments');
                     }
-                },
-                function(err) {
-                    console.log(err);
                 }
-            );
+            ).catch(function(res){
+                    $scope.errorMessageDialog(res)
+                })
 
         };
     });

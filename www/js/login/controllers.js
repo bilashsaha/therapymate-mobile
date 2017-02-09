@@ -2,10 +2,10 @@ angular.module('login.controllers', [])
    .controller('LoginCtrl', function($scope, $ionicModal, $timeout, $http,$httpParamSerializerJQLike,$state,$window) {
         // Perform the login action when the user submits the login form
         $scope.loginData = {};
-        var access = localStorage.getItem('access');
+        var access = JSON.parse(localStorage.getItem('access'));
         if(access && access.token){
             $window.location.href = "#/app/appointments";
-            $window.location.reload()
+            $window.location.reload();
         }
 
         $scope.doLogin = function() {

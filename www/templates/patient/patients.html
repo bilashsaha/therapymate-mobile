@@ -1,0 +1,9 @@
+<ion-view view-title="Patients">
+  <ion-content>
+    <div class="row" ng-repeat="patient in patients">
+      <div class="col">{{patient.patient_number}}</div>
+      <a class="col" href="#/app/patients/{{patient.id}}">{{patient.name}}</a>
+      <div class="col">{{patient.date_of_birth}}</div>
+    </div>
+  </ion-content>
+</ion-view>
