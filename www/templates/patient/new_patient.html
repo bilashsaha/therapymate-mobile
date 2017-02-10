@@ -64,11 +64,39 @@
         </select>
       </label>
 
-      <label class="item item-select item-input">
+      <label class="item item-select item-input" style="border-top: 3px solid #00A9DF">
         <span class="input-label">Billing Type</span>
-        <select ng-model="patient.patient.self_pay_billing_company_id" ng-options="self_pay_billing_company.id as self_pay_billing_company.name for self_pay_billing_company in newPatientSetting.billing_companies">
+        <select ng-change="selectedBillingType()" ng-model="patient.patient.self_pay_billing_company_id" ng-options="self_pay_billing_company.id as self_pay_billing_company.name for self_pay_billing_company in newPatientSetting.billing_companies">
           <option value="">Please select</option>
         </select>
+      </label>
+
+      <label class="item item-input">
+        <span class="input-label">Default Cash Rate</span>
+        <input type="number" ng-model="billing_setting.default_cash_rate">
+      </label>
+
+
+      <label style="border-top: 3px solid #00A9DF" ng-if="isInsuranceShowbale"  class="item item-select item-input">
+        <span class="input-label">Insurance Provider</span>
+        <select ng-model="provider.provider.provider_id" ng-options="patient_provider.id as patient_provider.name for patient_provider in newPatientSetting.patient_providers">
+          <option value="">Please select</option>
+        </select>
+      </label>
+
+      <label ng-if="isInsuranceShowbale" class="item item-input">
+        <span class="input-label">Insured's ID</span>
+        <input type="text" ng-model="provider.provider.insured_id_number">
+      </label>
+
+      <label ng-if="isInsuranceShowbale" class="item item-input">
+        <span class="input-label">Group #</span>
+        <input type="text" ng-model="provider.provider.insured_policy_group">
+      </label>
+
+      <label ng-if="isInsuranceShowbale" class="item item-input">
+        <span class="input-label">Copay</span>
+        <input type="text" ng-model="provider.provider.copay">
       </label>
 
       <label class="item">

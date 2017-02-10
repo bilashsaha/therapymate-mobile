@@ -71,9 +71,12 @@
         </select>
       </label>
 
-      <label class="item">
-        <button class="button button-block button-positive" type="submit">Save</button>
+      <label class="item item-input">
+        <span class="input-label">Default Cash Rate</span>
+        <input type="number" ng-model="patient.patient.patient_billing_setting_attributes.default_cash_rate">
+        <input type="hidden" ng-model="patient.patient.patient_billing_setting_attributes.id">
       </label>
+
     </div>
   </form>
 </ion-content>

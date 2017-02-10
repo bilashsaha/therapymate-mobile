@@ -13,7 +13,11 @@ angular.module('patient.controllers', [])
 
     .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike) {
         $scope.patient = {"patient": {}};
+        $scope.provider = {"provider": {}};
+        $scope.billing_setting = {"billing_setting": {}};
         $scope.patient.patient.clinician_id = $scope.access.clinician_id;
+        $scope.isInsuranceShowbale = false;
+
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
@@ -29,10 +33,11 @@ angular.module('patient.controllers', [])
         );
 
         $scope.createPatient = function () {
+            json = {"patient": $scope.patient.patient, "provider": $scope.provider.provider, "billing_setting": $scope.billing_setting}
             $http({
                 method: 'POST',
                 url: apiHost + 'api/app/patients.json?'+query_access,
-                data: $httpParamSerializerJQLike($scope.patient),
+                data: $httpParamSerializerJQLike(json),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
                 function (res) {
@@ -45,6 +50,10 @@ angular.module('patient.controllers', [])
                 })
 
         };
+        $scope.selectedBillingType = function(){
+            $scope.isInsuranceShowbale = event.target.options[event.target.selectedIndex].text == 'Insurance Billing'
+        }
+
     })
 
     .controller('EditPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike, $stateParams) {

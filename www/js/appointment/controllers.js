@@ -1,6 +1,6 @@
 angular.module('appointment.controllers', [])
    .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
-        $scope.navTitle='<img style="height: 45px" src="img/logo.png" />'
+
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
         }
@@ -9,6 +9,9 @@ angular.module('appointment.controllers', [])
         }
         $scope.viewbleDate = new Date((Date.parse($scope.date))).toString().split(' ').splice(0,4).join(' ');
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&"+query_access).then(function (response) {
+            for (var i = 0; i < response.data.appointments.length; i++) {
+                response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mm A')
+            }
             $scope.appointments = response.data.appointments;
         },
         function(err) {
