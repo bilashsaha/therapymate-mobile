@@ -1,18 +1,20 @@
-  <ion-header-bar>
-    <h1 class="title">Login</h1>
-    <div class="buttons">
-      <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
-  </ion-header-bar>
-  <ion-content>
+<ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
+
+<ion-content>
     <form ng-submit="doLogin()">
       <div class="list">
         <label class="item item-input">
-          <span class="input-label">Username</span>
+          <span class="input-label">
+          <i class="icon ion-person"></i>
+            Username
+          </span>
           <input type="text" ng-model="loginData.username">
         </label>
         <label class="item item-input">
-          <span class="input-label">Password</span>
+          <span class="input-label">
+            <i class="icon ion-locked"></i>
+            Password
+          </span>
           <input type="password" ng-model="loginData.password">
         </label>
         <label class="item">

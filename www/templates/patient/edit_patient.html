@@ -1,83 +1,117 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
-<ion-content>
-  <form ng-submit="updatePatient()">
-    <div class="list">
+  <ion-content>
+    <form ng-submit="updatePatient()">
+      <div class="list">
+        <ion-item>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-person"></i>
+              First Name
+            </span>
+            <input type="text" ng-model="patient.patient.firstname">
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-person"></i>
+              Last Name
+            </span>
+            <input type="text" ng-model="patient.patient.lastname">
+          </label>
 
-      <label class="item item-input">
-        <span class="input-label">First Name</span>
-        <input type="text" ng-model="patient.patient.firstname">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Last Name</span>
-        <input type="text" ng-model="patient.patient.lastname">
-      </label>
-      <label class="item item-select item-input">
-        <span class="input-label">Assign Clinician</span>
-        <select ng-model="patient.patient.clinician_id" ng-options="clinician.id as clinician.name for clinician in newPatientSetting.clinicians">
-          <option value="">Please select</option>
-        </select>
-      </label>
+          <label class="item item-select item-input">
+            <span class="input-label">
+              <i class="icon ion-transgender"></i>
+              Gender
+            </span>
+            <select ng-model="patient.patient.gender" ng-options="gender for gender in genderOptions">
+              <option value="">Please select</option>
+            </select>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-calendar"></i>
+              DOB
+            </span>
+            <input type="text" id="dob" class="masked_input_dob" placeholder="mm/dd/yyyy"
+                   ng-model="patient.patient.date_of_birth">
+          </label>
 
-      <label class="item item-select item-input">
-        <span class="input-label">Gender</span>
-        <select ng-model="patient.patient.gender" ng-options="gender for gender in genderOptions">
-          <option value="">Please select</option>
-        </select>
-      </label>
-      <label class="item item-input">
-        <span class="input-label">DOB</span>
-        <input type="date" ng-model="patient.patient.date_of_birth">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Home Phone</span>
-        <input type="tel" ng-model="patient.patient.homephone">
-      </label>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-email"></i>
+              Email
+            </span>
+            <input type="email" ng-model="patient.patient.email">
+          </label>
+        </ion-item>
 
+        <ion-item>
+          <label class="item item-select item-input">
+            <span class="input-label">
+              <i class="icon ion-person"></i>
+              Assign Clinician
+            </span>
+            <select ng-model="patient.patient.clinician_id"
+                    ng-options="clinician.id as clinician.name for clinician in newPatientSetting.clinicians">
+              <option value="">Please select</option>
+            </select>
+          </label>
+        </ion-item>
+        <ion-item>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-android-call"></i>
+              Home Phone
+            </span>
+            <input type="text" id="home_phone" class="masked_input" ng-model="patient.patient.homephone">
+          </label>
 
-      <label class="item item-input">
-        <span class="input-label">Mobile Phone</span>
-        <input type="tel" ng-model="patient.patient.mobilephone">
-      </label>
-      <label class="item item-select item-input">
-        <span class="input-label">Message</span>
-        <select ng-model="patient.patient.homephonemessage" ng-options="message for message in homephonemessageOptions">
-          <option value="">Please select</option>
-        </select>
-      </label>
-      <label class="item item-select item-input">
-        <span class="input-label">Cell career</span>
-        <select ng-model="patient.patient.mobile_carrier" ng-options="mobile_carrier for mobile_carrier in newPatientSetting.carriers">
-          <option value="">Please select</option>
-        </select>
-      </label>
+          <label class="item item-input">
+            <span class="input-label">
+              <i class="icon ion-iphone"></i>
+              Mobile Phone
+            </span>
+            <input type="text" id="mobile_phone" class="masked_input" ng-model="patient.patient.mobilephone">
+          </label>
+          <label class="item item-select item-input">
+            <span class="input-label">
+              <i class="icon ion-android-textsms"></i>
+              Message
+            </span>
+            <select ng-model="patient.patient.homephonemessage"
+                    ng-options="message for message in homephonemessageOptions">
+              <option value="">Please select</option>
+            </select>
+          </label>
+          <label class="item item-select item-input">
+            <span class="input-label">
+              <i class="icon ion-wifi"></i>
+              Cell career
+            </span>
+            <select ng-model="patient.patient.mobile_carrier"
+                    ng-options="mobile_carrier for mobile_carrier in newPatientSetting.carriers">
+              <option value="">Please select</option>
+            </select>
+          </label>
 
-      <label class="item item-input">
-        <span class="input-label">Email</span>
-        <input type="email" ng-model="patient.patient.email">
-      </label>
+          <label class="item item-select item-input">
+            <span class="input-label">
+              <i class="icon ion-android-call"></i>
+              Preferred phone
+            </span>
+            <select ng-model="patient.patient.preferredphone"
+                    ng-options="preferredphone for preferredphone in preferredphoneOptions">
+              <option value="">Please select</option>
+            </select>
+          </label>
 
-      <label class="item item-select item-input">
-        <span class="input-label">Preferred phone</span>
-        <select ng-model="patient.patient.preferredphone" ng-options="preferredphone for preferredphone in preferredphoneOptions">
-          <option value="">Please select</option>
-        </select>
-      </label>
+        </ion-item>
 
-      <label class="item item-select item-input">
-        <span class="input-label">Billing Type</span>
-        <select ng-model="patient.patient.self_pay_billing_company_id" ng-options="self_pay_billing_company.id as self_pay_billing_company.name for self_pay_billing_company in newPatientSetting.billing_companies">
-          <option value="">Please select</option>
-        </select>
-      </label>
-
-      <label class="item item-input">
-        <span class="input-label">Default Cash Rate</span>
-        <input type="number" ng-model="patient.patient.patient_billing_setting_attributes.default_cash_rate">
-        <input type="hidden" ng-model="patient.patient.patient_billing_setting_attributes.id">
-      </label>
-
-    </div>
-  </form>
-</ion-content>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Save</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
 </ion-view>

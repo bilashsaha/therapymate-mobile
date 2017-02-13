@@ -43,6 +43,10 @@ angular.module('starter.controllers', [])
         $(function(){
             $("body").delegate(".masked_input", "focus", function(){
                 $(this).inputmask("999-999-9999");
+
+            });
+            $("body").delegate(".masked_input_dob", "focus", function(){
+                $(this).inputmask("m/d/y");
             });
         });
 

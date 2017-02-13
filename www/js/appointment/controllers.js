@@ -1,5 +1,5 @@
 angular.module('appointment.controllers', [])
-   .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
+   .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -8,13 +8,16 @@ angular.module('appointment.controllers', [])
             $scope.date =  $location.search().date
         }
         $scope.viewbleDate = new Date((Date.parse($scope.date))).toString().split(' ').splice(0,4).join(' ');
+        $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&"+query_access).then(function (response) {
             for (var i = 0; i < response.data.appointments.length; i++) {
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mm A')
             }
             $scope.appointments = response.data.appointments;
+            $ionicLoading.hide();
         },
         function(err) {
+            $ionicLoading.hide();
           console.log(err);
           $state.go('app.login');
         }
@@ -36,12 +39,9 @@ angular.module('appointment.controllers', [])
 
     })
 
-.controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
+.controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
     $scope.appointment = {"appointment": {}};
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
-        if($scope.appointment.appointment.start_time){
-            $scope.appointment.appointment.end_time = 20
-        }
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -50,15 +50,19 @@ angular.module('appointment.controllers', [])
             $scope.date =  $location.search().date
         }
 
+        $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments/new.json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
+                $ionicLoading.hide();
             },
             function(err) {
+                $ionicLoading.hide();
                 $scope.errorMessageDialog(err);
             }
         );
 
         $scope.createAppointment = function(){
+            $ionicLoading.show();
             $http({
                 method: 'POST',
                 url: apiHost+'api/app/appointments.json?'+query_access,
@@ -67,19 +71,25 @@ angular.module('appointment.controllers', [])
             }).then(
                 function(res) {
                     if(res.data){
-                        $state.go('app.appointments');
+                        $ionicLoading.hide();
+                        $window.location.href = "#/app/appointments";
+                        $window.location.reload()
                     }
                 }
             ).catch(function(res){
+                    $ionicLoading.hide();
                     $scope.errorMessageDialog(res)
                 })
 
         };
         $scope.clinicianChanged = function(selectedClinicianId){
+            $ionicLoading.show();
             $http.get(apiHost+"api/app/appointments/new.json?"+query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
                     $scope.newAppointmentSetting = response.data;
+                    $ionicLoading.hide();
                 },
                 function(err) {
+                    $ionicLoading.hide();
                     $scope.errorMessageDialog(err);
                 }
             );
@@ -97,7 +107,8 @@ angular.module('appointment.controllers', [])
         }
 })
 
-    .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams) {
+    .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
+        $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
                 response.data.appointment.start_at = new Date(response.data.appointment.start_at);
@@ -105,14 +116,16 @@ angular.module('appointment.controllers', [])
                 response.data.appointment.end_time = new Date(response.data.appointment.end_time);
                 response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
                 $scope.appointment = {"appointment": response.data.appointment};
+                $ionicLoading.hide();
             },
             function(err) {
-                console.log(err);
-                $state.go('app.login');
+                $ionicLoading.hide();
+                $scope.errorMessageDialog(err)
             }
         );
 
         $scope.updateAppointment = function(){
+            $ionicLoading.show();
             var access = JSON.parse(localStorage.getItem('access'));
             $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
             .then(
@@ -121,10 +134,12 @@ angular.module('appointment.controllers', [])
                         $state.go('app.appointments');
                         $http.get(apiHost+"api/app/appointments.json?date="+$scope.date+"&"+query_access).then(function (response) {
                             $scope.appointments = response.data.appointments;
+                            $ionicLoading.hide()
                         })
                     }
                 }
             ).catch(function(res){
+                    $ionicLoading.hide();
                     $scope.errorMessageDialog(res)
                 })
 
