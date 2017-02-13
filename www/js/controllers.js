@@ -40,7 +40,11 @@ angular.module('starter.controllers', [])
 
         }
 
-
+        $(function(){
+            $("body").delegate(".masked_input", "focus", function(){
+                $(this).inputmask("999-999-9999");
+            });
+        });
 
 })
 
