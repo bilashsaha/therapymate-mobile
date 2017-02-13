@@ -34,7 +34,7 @@
         </label>
         <label class="item item-select item-input">
           <span class="input-label">Time</span>
-          <input type="time" ng-model="appointment.appointment.start_time">
+          <input type="time" ng-model="appointment.appointment.start_time" ng-change="startTimeChanged(appointment.appointment.start_time)">
         </label>
         <label class="item item-select item-input">
           <span class="input-label">Until</span>

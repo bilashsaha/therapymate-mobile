@@ -39,6 +39,9 @@ angular.module('appointment.controllers', [])
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike) {
     $scope.appointment = {"appointment": {}};
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
+        if($scope.appointment.appointment.start_time){
+            $scope.appointment.appointment.end_time = 20
+        }
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -80,6 +83,17 @@ angular.module('appointment.controllers', [])
                     $scope.errorMessageDialog(err);
                 }
             );
+        }
+        $scope.startTimeChanged = function(startTime){
+            var duration = 0;
+            for (i=0;i< $scope.newAppointmentSetting.service_codes.length; i++){
+              if($scope.appointment.appointment.service_code_id == $scope.newAppointmentSetting.service_codes[i].id){
+                duration = $scope.newAppointmentSetting.service_codes[i].duration;
+                break;
+              }
+            }
+            var endTime = moment(startTime).add(duration,"minutes");
+            $scope.appointment.appointment.end_time = endTime._d;
         }
 })
 
