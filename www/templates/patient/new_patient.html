@@ -87,7 +87,7 @@
           <label class="item item-select item-input">
             <span class="input-label">
               <i class="icon ion-wifi"></i>
-              Cell career
+              Cell carrier
             </span>
             <select ng-model="patient.patient.mobile_carrier"
                     ng-options="mobile_carrier for mobile_carrier in newPatientSetting.carriers">
@@ -121,7 +121,7 @@
             </select>
           </label>
 
-          <label class="item item-input">
+          <label class="item item-input" ng-if="isCashShowbale">
             <span class="input-label">
               <i class="icon ion-social-usd"></i>
               Default Cash Rate

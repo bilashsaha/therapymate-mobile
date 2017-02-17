@@ -1,5 +1,9 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 <ion-content>
+  <ion-refresher
+          pulling-text="Pull to refresh..."
+          on-refresh="doRefresh()">
+  </ion-refresher>
     <div class="row header" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
       <div class="col">Patient #</div>
       <div class="col">Name</div>

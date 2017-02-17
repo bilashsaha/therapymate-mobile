@@ -12,6 +12,10 @@ angular.module('patient.controllers', [])
                 $state.go('app.login');
             }
         );
+        $scope.doRefresh = function(){
+            $window.location.href = "#/app/patients";
+            $window.location.reload();
+        }
     })
 
     .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike,$ionicLoading) {
@@ -20,9 +24,10 @@ angular.module('patient.controllers', [])
         $scope.billing_setting = {"billing_setting": {}};
         $scope.patient.patient.clinician_id = $scope.access.clinician_id;
         $scope.isInsuranceShowbale = false;
+        $scope.isCashShowbale = false;
 
         $scope.genderOptions = ["Male", "Female"];
-        $scope.homephonemessageOptions = ["No Messages", "Voice Messages"];
+        $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
 
 
@@ -64,14 +69,15 @@ angular.module('patient.controllers', [])
 
         };
         $scope.selectedBillingType = function(){
-            $scope.isInsuranceShowbale = event.target.options[event.target.selectedIndex].text == 'Insurance Billing'
+            $scope.isInsuranceShowbale = event.target.options[event.target.selectedIndex].text == 'Insurance'
+            $scope.isCashShowbale = event.target.options[event.target.selectedIndex].text == 'Cash'
         }
 
     })
 
     .controller('EditPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
         $scope.genderOptions = ["Male", "Female"];
-        $scope.homephonemessageOptions = ["No Messages", "Voice Messages"];
+        $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
         var access = JSON.parse(localStorage.getItem('access'));
         $ionicLoading.show();
