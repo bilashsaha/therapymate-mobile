@@ -1,1 +1,12 @@
-/* Empty. Add your own CSS if you like */
+.filter-table .quick { margin-left: 0.5em; font-size: 0.8em; text-decoration: none; }
+.fitler-table .quick:hover { text-decoration: underline; }
+td.alt { background-color: rgba(16, 174, 225, 0.1); }
+
+label.search{
+    width: 99%;
+    margin: 5px auto;
+    border: 1px solid #DADADA;
+}
+table#patient_list tr td{
+  padding: 0 2px;
+}

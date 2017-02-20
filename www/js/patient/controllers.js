@@ -5,6 +5,11 @@ angular.module('patient.controllers', [])
         $http.get(apiHost + "api/app/patients.json?date=" + $scope.date + "&token=" + access.token + "&email=" + access.email).then(function (response) {
                 $scope.patients = response.data.patients;
                 $ionicLoading.hide();
+                setInterval(function(){
+                    if ($(".filter-table").length == 0 ) {
+                        $("table#patient_list").filterTable({label: '', placeholder: 'Search..', ignoreClass: 'patient_header'});
+                    }
+                }, 200)
             },
             function (err) {
                 $ionicLoading.hide();
@@ -16,6 +21,10 @@ angular.module('patient.controllers', [])
             $window.location.href = "#/app/patients";
             $window.location.reload();
         }
+        $scope.$on('$viewContentLoaded', function(){
+            $('table#patient_list').filterTable();
+            console.log('6666666666666')
+        });
     })
 
     .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike,$ionicLoading) {
@@ -76,6 +85,7 @@ angular.module('patient.controllers', [])
     })
 
     .controller('EditPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
+        $scope.editable = false;
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
         $scope.preferredphoneOptions = ["Home", "Mobile"];
@@ -115,4 +125,7 @@ angular.module('patient.controllers', [])
                 })
 
         };
+        $scope.makeEditable = function(){
+            $scope.editable = true;
+        }
     });

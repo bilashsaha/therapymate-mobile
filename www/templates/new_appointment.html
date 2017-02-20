@@ -26,12 +26,13 @@
             <i class="icon ion-chatbubbles"></i>
             Session Type
           </span>
-          <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes">
+          <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes" ng-change="resetForm()">
             <option value="">Please select</option>
             <option ng-repeat="service_code in newAppointmentSetting.service_codes" ng-value="service_code.id">{{service_code.description}}</option>
           </select>
         </label>
-        <label class="item item-select item-input">
+
+        <label class="item item-select item-input" ng-if="!isCalenderEvent">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Patient
@@ -40,6 +41,7 @@
             <option value="">Please select</option>
           </select>
         </label>
+
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-calendar"></i>
@@ -77,15 +79,23 @@
           <input type="date" ng-model="appointment.appointment.scheduled_until">
         </label>
 
-        <ion-checkbox ng-model="appointment.appointment.email_reminder">
+        <ion-checkbox ng-model="appointment.appointment.email_reminder" ng-if="!isCalenderEvent">
           <i class="icon ion-email"></i>
           Email Reminder
         </ion-checkbox>
-        <ion-checkbox ng-model="appointment.appointment.text_reminder">
+        <ion-checkbox ng-model="appointment.appointment.text_reminder" ng-if="!isCalenderEvent">
           <i class="icon ion-android-textsms"></i>
           Text Reminder
         </ion-checkbox>
 
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-edit"></i>&nbsp;
+           <span ng-if="!isCalenderEvent">Reminder</span>
+            <span ng-if="isCalenderEvent">Description</span>
+          </span>
+          <textarea ng-model="appointment.appointment.memo" style="height: 100px;"></textarea>
+        </label>
 
         <label class="item">
           <button class="button button-block button-positive" type="submit">Save</button>

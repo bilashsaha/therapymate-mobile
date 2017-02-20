@@ -4,15 +4,20 @@
           pulling-text="Pull to refresh..."
           on-refresh="doRefresh()">
   </ion-refresher>
-    <div class="row header" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
-      <div class="col">Patient #</div>
-      <div class="col">Name</div>
-      <div class="col">DOB</div>
-    </div>
-    <div class="row" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0" ng-repeat="patient in patients">
-      <div class="col">{{patient.patient_number}}</div>
-      <a class="col" href="#/app/patients/{{patient.id}}">{{patient.name}}</a>
-      <div class="col">{{patient.date_of_birth}}</div>
-    </div>
+
+  <table width="99%" id="patient_list" style="margin: 0 auto">
+    <thead>
+    <tr style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
+      <th class="patient_header" style="text-align: left">Patient #</th>
+      <th class="patient_header"  style="text-align: left">Name</th>
+      <th class="patient_header"  style="text-align: left">DOB</th>
+    </tr>
+    </thead>
+    <tr ng-repeat="patient in patients" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0">
+      <td>{{patient.patient_number}}</td>
+      <td><a class="col" href="#/app/patients/{{patient.id}}">{{patient.name}}</a></td>
+      <td>{{patient.date_of_birth}}</td>
+    </tr>
+  </table>
   </ion-content>
 </ion-view>

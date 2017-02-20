@@ -1,6 +1,9 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
   <ion-content>
+    <label class="item" ng-if="!editable">
+      <button class="button button-block button-positive" type="submit" ng-click="makeEditable()">Edit</button>
+    </label>
     <form ng-submit="updatePatient()">
       <div class="list">
         <ion-item>
@@ -9,22 +12,25 @@
               <i class="icon ion-person"></i>
               First Name
             </span>
-            <input type="text" ng-model="patient.patient.firstname">
+            <span ng-if="!editable">{{patient.patient.firstname}}</span>
+            <input type="text" ng-model="patient.patient.firstname" ng-if="editable">
           </label>
           <label class="item item-input">
             <span class="input-label">
               <i class="icon ion-person"></i>
               Last Name
             </span>
-            <input type="text" ng-model="patient.patient.lastname">
+            <span ng-if="!editable">{{patient.patient.lastname}}</span>
+            <input type="text" ng-model="patient.patient.lastname" ng-if="editable">
           </label>
 
-          <label class="item item-select item-input">
+          <label class="item {{editable ? 'item-select' : ''}} item-input">
             <span class="input-label">
               <i class="icon ion-transgender"></i>
               Gender
             </span>
-            <select ng-model="patient.patient.gender" ng-options="gender for gender in genderOptions">
+            <span ng-if="!editable">{{patient.patient.gender}}</span>
+            <select ng-model="patient.patient.gender" ng-options="gender for gender in genderOptions" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>
@@ -33,82 +39,116 @@
               <i class="icon ion-calendar"></i>
               DOB
             </span>
+            <span ng-if="!editable">{{patient.patient.date_of_birth}}</span>
             <input type="text" id="dob" class="masked_input_dob" placeholder="mm/dd/yyyy"
-                   ng-model="patient.patient.date_of_birth">
+                   ng-model="patient.patient.date_of_birth" ng-if="editable">
           </label>
 
-          <label class="item item-input">
+          <label class="item item-input" ng-if="editable">
             <span class="input-label">
               <i class="icon ion-email"></i>
               Email
             </span>
+            <span ng-if="!editable">{{patient.patient.email}}</span>
             <input type="email" ng-model="patient.patient.email">
           </label>
+
+          <div class="item item-input" ng-if="!editable">
+            <span class="input-label">
+              <i class="icon ion-email"></i>
+              Email
+            </span>
+            <a href="mailto:{{patient.patient.email}}">{{patient.patient.email}}</a>
+          </div>
+
         </ion-item>
 
         <ion-item>
-          <label class="item item-select item-input">
+          <label class="item {{editable ? 'item-select' : ''}} item-input">
             <span class="input-label">
               <i class="icon ion-person"></i>
               Assign Clinician
             </span>
+            <span ng-if="!editable">{{patient.patient.clinician_name}}</span>
             <select ng-model="patient.patient.clinician_id"
-                    ng-options="clinician.id as clinician.name for clinician in newPatientSetting.clinicians">
+                    ng-options="clinician.id as clinician.name for clinician in newPatientSetting.clinicians" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>
         </ion-item>
         <ion-item>
-          <label class="item item-input">
+
+          <label class="item item-input" ng-if="editable">
             <span class="input-label">
               <i class="icon ion-android-call"></i>
               Home Phone
             </span>
-            <input type="text" id="home_phone" class="masked_input" ng-model="patient.patient.homephone">
+            <input type="text" id="home_phone" class="masked_input" ng-model="patient.patient.homephone" >
           </label>
 
-          <label class="item item-input">
+          <div class="item item-input" ng-if="!editable">
+            <span class="input-label">
+              <i class="icon ion-android-call"></i>
+              Home Phone
+            </span>
+            <span ><a href="tel:{{patient.patient.actionable_homephone}}">{{patient.patient.homephone}}</a></span>
+          </div>
+
+          <label class="item item-input" ng-if="editable">
             <span class="input-label">
               <i class="icon ion-iphone"></i>
               Mobile Phone
             </span>
             <input type="text" id="mobile_phone" class="masked_input" ng-model="patient.patient.mobilephone">
           </label>
-          <label class="item item-select item-input">
+
+          <div class="item item-input"  ng-if="!editable">
+            <span class="input-label">
+              <i class="icon ion-iphone"></i>
+              Mobile Phone
+            </span>
+            <span><a href="tel:{{patient.patient.mobilephone}}">{{patient.patient.actionable_mobilephone}}</a></span>
+          </div>
+
+
+          <label class="item {{editable ? 'item-select' : ''}} item-input">
             <span class="input-label">
               <i class="icon ion-android-textsms"></i>
               Message
             </span>
+            <span ng-if="!editable">{{patient.patient.homephonemessage}}</span>
             <select ng-model="patient.patient.homephonemessage"
-                    ng-options="message for message in homephonemessageOptions">
+                    ng-options="message for message in homephonemessageOptions" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>
-          <label class="item item-select item-input">
+          <label class="item {{editable ? 'item-select' : ''}} item-input">
             <span class="input-label">
               <i class="icon ion-wifi"></i>
               Cell carrier
             </span>
+            <span ng-if="!editable">{{patient.patient.mobile_carrier}}</span>
             <select ng-model="patient.patient.mobile_carrier"
-                    ng-options="mobile_carrier for mobile_carrier in newPatientSetting.carriers">
+                    ng-options="mobile_carrier for mobile_carrier in newPatientSetting.carriers" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>
 
-          <label class="item item-select item-input">
+          <label class="item {{editable ? 'item-select' : ''}} item-input">
             <span class="input-label">
               <i class="icon ion-android-call"></i>
               Preferred phone
             </span>
+            <span ng-if="!editable">{{patient.patient.preferredphone}}</span>
             <select ng-model="patient.patient.preferredphone"
-                    ng-options="preferredphone for preferredphone in preferredphoneOptions">
+                    ng-options="preferredphone for preferredphone in preferredphoneOptions" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>
 
         </ion-item>
 
-        <label class="item">
+        <label class="item" ng-if="editable">
           <button class="button button-block button-positive" type="submit">Save</button>
         </label>
       </div>
