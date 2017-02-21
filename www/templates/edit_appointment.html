@@ -97,9 +97,18 @@
           <textarea ng-model="appointment.appointment.memo" style="height: 100px;"></textarea>
         </label>
 
-        <label class="item">
+        <div class="row">
+          <div class="col">
           <button class="button button-block button-positive" type="submit">Save</button>
-        </label>
+          </div>
+          <div class="col">
+            <button class="button button-block button-assertive" type="button" ng-click="delete()">Delete</button>
+          </div>
+          <div class="col">
+            <a class="button button-block button-dark" href="#/app/appointments/missed/{{appointment.appointment.id}}">Missed</a>
+          </div>
+        </div>
+
       </div>
     </form>
   </ion-content>

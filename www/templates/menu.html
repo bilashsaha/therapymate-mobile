@@ -26,19 +26,19 @@
           <i class="icon ion-log-out"></i>
           Logout
         </ion-item>
-        <ion-item menu-close href="#/app/appointments/new">
-          <i class="icon ion-ios-time"></i>
-          New Appointment
-        </ion-item>
-        <ion-item menu-close href="#/app/patients/new">
-          <i class="icon ion-person-add"></i>
-          New Patient
-        </ion-item>
-        <ion-item menu-close href="#/app/appointments">
+        <ion-item ng-if="access != null" menu-close href="#/app/appointments">
           <i class="icon ion-ios-list"></i>
           Appointments
         </ion-item>
-        <ion-item menu-close href="#/app/patients">
+        <ion-item ng-if="access != null" menu-close href="#/app/appointments/new">
+          <i class="icon ion-ios-time"></i>
+          New Appointment
+        </ion-item>
+        <ion-item ng-if="access != null" menu-close href="#/app/patients/new">
+          <i class="icon ion-person-add"></i>
+          New Patient
+        </ion-item>
+        <ion-item ng-if="access != null" menu-close href="#/app/patients">
           <i class="icon ion-ios-people"></i>
           Patients
         </ion-item>

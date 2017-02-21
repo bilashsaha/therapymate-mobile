@@ -125,6 +125,15 @@ var app = angular.module('starter',
                     }
                 }
             })
+            .state('app.missed_appointment', {
+                url: '/appointments/missed/:id',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/missed_appointment.html',
+                        controller: 'MissedAppointmentCtrl'
+                    }
+                }
+            })
             .state('app.login', {
                 url: '/login',
                 views: {

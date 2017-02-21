@@ -1,0 +1,45 @@
+<ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
+
+  <ion-content>
+    <form ng-submit="createMissedAppointment()">
+      <div class="list">
+        <label class="item item-select item-input">
+          <span class="input-label">
+            <i class="icon ion-ios-glasses"></i>
+            Reason
+          </span>
+
+          <select ng-model="missed_appointment_note.missed_appointment_note.missed_appointment_reason_id" ng-options="missed_appointment_reason.id as missed_appointment_reason.name for missed_appointment_reason in missedAppointmentSetting.missed_appointment_reasons">
+            <option value="">Please select</option>
+          </select>
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-cash"></i>
+            Cancellation Fee
+          </span>
+          <input type="text" ng-model="missed_appointment_note.missed_appointment_note.cancellation_fee">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">
+            <i class="icon ion-android-create"></i>
+            Comment
+          </span>
+          <textarea style="height: 100px;" ng-model="missed_appointment_note.missed_appointment_note.comment"></textarea>
+        </label>
+
+        <ion-checkbox ng-model="sign_this_form.sign_this_form">
+          Sign this form
+        </ion-checkbox>
+
+        <div class="row">
+          <button class="button button-block button-positive" type="submit">Save</button>
+        </div>
+
+      </div>
+    </form>
+  </ion-content>
+
+</ion-view>
