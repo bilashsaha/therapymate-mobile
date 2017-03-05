@@ -44,6 +44,10 @@ angular.module('starter.controllers', [])
             $location.path( path );
         };
 
+        $scope.showVersion = function(){
+            alert("Therapymate\nVersion: 1.0.0")
+        }
+
         $(function(){
             $("body").delegate(".masked_input", "focus", function(){
                 $(this).inputmask("999-999-9999");

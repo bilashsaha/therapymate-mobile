@@ -18,6 +18,8 @@ angular.module('appointment.controllers', [])
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+query_access).then(function (response) {
             for (var i = 0; i < response.data.appointments.length; i++) {
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mm A')
+                response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time)).format('hh:mm A')
+                response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
             }
             $scope.appointments = response.data.appointments;
             $ionicLoading.hide();
@@ -47,6 +49,7 @@ angular.module('appointment.controllers', [])
     $scope.appointment = {"appointment": {}};
         $scope.isCalenderEvent = false;
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
+        $scope.appointment.appointment.start_time = new Date("1970-01-01 "+(new Date().getHours()+1)+":00:00");
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -123,11 +126,21 @@ angular.module('appointment.controllers', [])
             $scope.appointment.appointment.end_time = endTime._d;
         }
         $scope.resetForm = function(){
-            $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calender';
+            $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
         }
 })
 
-    .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
+    .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading, $ionicModal) {
+
+        $ionicModal.fromTemplateUrl('modal.html', {
+            scope: $scope,
+            animation: 'slide-in-up'
+        }).then(function(modal) {
+            $scope.modal = modal;
+        });
+
+        $scope.choice = {"val":"A"};
+
         $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
@@ -178,7 +191,7 @@ angular.module('appointment.controllers', [])
 
         };
         $scope.resetForm = function(){
-            $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calender';
+            $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
         }
         $scope.startTimeChanged = function(startTime){
             var duration = 0;
@@ -191,22 +204,35 @@ angular.module('appointment.controllers', [])
             var endTime = moment(startTime).add(duration,"minutes");
             $scope.appointment.appointment.end_time = endTime._d;
         };
+        $scope.hideModal = function(){
+            $scope.modal.hide();
+        }
+        $scope.showModal = function(){
+            $scope.modal.show();
+        }
         $scope.delete = function(){
-            if(confirm("Are you sure?")){
-                $ionicLoading.show();
-                var access = JSON.parse(localStorage.getItem('access'));
-                $http.delete(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
-                    .then(
-                    function(res) {
-                        $ionicLoading.hide();
-                        $window.location.href = "#/app/appointments";
-                        $window.location.reload();
-                    }
-                ).catch(function(res){
-                        $ionicLoading.hide();
-                        $scope.errorMessageDialog(res)
-                    })
+
+            $scope.modal.show();
+            $ionicLoading.show();
+            var url = "";
+            if($scope.choice.val == 'A'){
+                url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
             }
+            else{
+                url = apiHost+"api/app/appointments/"+$stateParams.id+"/destroy_all.json?";
+            }
+            var access = JSON.parse(localStorage.getItem('access'));
+            $http.delete(url+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+                .then(
+                function(res) {
+                    $ionicLoading.hide();
+                    $window.location.href = "#/app/appointments";
+                    $window.location.reload();
+                }
+            ).catch(function(res){
+                    $ionicLoading.hide();
+                    $scope.errorMessageDialog(res)
+                })
         }
     })
 

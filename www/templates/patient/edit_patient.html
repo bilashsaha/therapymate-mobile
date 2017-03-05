@@ -116,8 +116,8 @@
               <i class="icon ion-android-textsms"></i>
               Message
             </span>
-            <span ng-if="!editable">{{patient.patient.homephonemessage}}</span>
-            <select ng-model="patient.patient.homephonemessage"
+            <span ng-if="!editable">{{patient.patient.mobilephonemessage}}</span>
+            <select ng-model="patient.patient.mobilephonemessage"
                     ng-options="message for message in homephonemessageOptions" ng-if="editable">
               <option value="">Please select</option>
             </select>

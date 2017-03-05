@@ -1,3 +1,25 @@
+<script id="modal.html" type="text/ng-template">
+  <ion-modal-view>
+    <ion-header-bar>
+      <h1 class="title">Delete Appointment</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        <ion-radio ng-model="choice.val" ng-value="'A'">Only this appointment</ion-radio>
+        <ion-radio ng-model="choice.val" ng-value="'B'">This one and all recurring appointments that follow</ion-radio>
+      </ion-list>
+      <div class="row">
+        <div class="col">
+          <button class="button button-block button-assertive" type="button" ng-click="hideModal()">Cancel</button>
+        </div>
+        <div class="col">
+          <button class="button button-block button-positive" type="button" ng-click="delete()">Yes</button>
+        </div>
+      </div>
+    </ion-content>
+  </ion-modal-view>
+</script>
+
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
   <ion-content>
@@ -102,7 +124,7 @@
           <button class="button button-block button-positive" type="submit">Save</button>
           </div>
           <div class="col">
-            <button class="button button-block button-assertive" type="button" ng-click="delete()">Delete</button>
+            <button class="button button-block button-assertive" type="button" ng-click="showModal()">Delete</button>
           </div>
           <div class="col">
             <a class="button button-block button-dark" href="#/app/appointments/missed/{{appointment.appointment.id}}">Missed</a>

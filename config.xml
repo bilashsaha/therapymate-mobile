@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.therapymate664305" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>therapymate</name>
+<widget id="com.ionicframework.therapymate664305" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>Therapymate</name>
   <description>
-        An Ionic Framework and Cordova project.
-    </description>
-  <author email="you@example.com" href="http://example.com/">
-      Your Name Here
-    </author>
+    Practice Management System for Mental Health Professionals,Social Workers,Therapists,Counselors,Psychiatrists,Psychologist
+   </description>
+  <author email="don.greene@therapymate.com" href="https://www.therapymate.com/">
+      Don Greene
+  </author>
   <content src="index.html"/>
   <access origin="*"/>
   <allow-navigation href="http://*/*"/>
