@@ -124,7 +124,7 @@
           <button class="button button-block button-positive" type="submit">Save</button>
           </div>
           <div class="col">
-            <button class="button button-block button-assertive" type="button" ng-click="showModal()">Delete</button>
+            <button class="button button-block button-assertive" type="button" ng-click="appointment.appointment.frequency != 'One Time' ? showModal() : delete()">Delete</button>
           </div>
           <div class="col">
             <a class="button button-block button-dark" href="#/app/appointments/missed/{{appointment.appointment.id}}">Missed</a>

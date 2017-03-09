@@ -210,17 +210,29 @@ angular.module('appointment.controllers', [])
         $scope.showModal = function(){
             $scope.modal.show();
         }
-        $scope.delete = function(){
 
-            $scope.modal.show();
-            $ionicLoading.show();
-            var url = "";
-            if($scope.choice.val == 'A'){
-                url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
+        $scope.delete = function(){
+            if($scope.appointment.appointment.frequency != 'One Time'){
+                $scope.modal.show();
+                $ionicLoading.show();
+                var url = "";
+                if($scope.choice.val == 'A'){
+                    url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
+                }
+                else{
+                    url = apiHost+"api/app/appointments/"+$stateParams.id+"/destroy_all.json?";
+                }
+
             }
             else{
-                url = apiHost+"api/app/appointments/"+$stateParams.id+"/destroy_all.json?";
+                url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
+                if(!confirm("Are you sure?")){
+                    return;
+                }
+                $ionicLoading.show();
             }
+
+
             var access = JSON.parse(localStorage.getItem('access'));
             $http.delete(url+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
                 .then(
