@@ -7,10 +7,10 @@
       <span class="ion-arrow-right-a col" style="cursor: pointer;text-align: right;font-size: 25px;" ng-click="nextDate()"></span>
     </div>
     <div class="row" style="border-bottom: 1px solid #DADADA;padding: 6px 3px 6px 3px" ng-repeat="appointment in appointments">
-      <div class="" style="width: 36%">{{appointment.start_at_time}}-{{appointment.end_at_time}}</div>
-      <a class="" style="width: 30%" href="#/app/appointments/{{appointment.id}}">{{appointment.patient_name}}</a>
-      <div class="" style="width: 14%">{{appointment.service_code}}</div>
-      <div class="" style="width: 20%;text-align: right">{{appointment.location}}</div>
+      <div class="" style="width: 38%">{{appointment.start_at_time}}-{{appointment.end_at_time}}</div>
+      <a class="" style="width: 28%" href="#/app/appointments/{{appointment.id}}">{{appointment.patient_name}}</a>
+      <div class="" style="width: 15%">{{appointment.service_code}}</div>
+      <div class="" style="width: 19%;text-align: right">{{appointment.location}}</div>
     </div>
   </ion-content>
 </ion-view>
