@@ -17,8 +17,8 @@ angular.module('appointment.controllers', [])
         $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+query_access).then(function (response) {
             for (var i = 0; i < response.data.appointments.length; i++) {
-                response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mm A')
-                response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time)).format('hh:mm A')
+                response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mmA')
+                response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time)).format('hh:mmA')
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
             }
             $scope.appointments = response.data.appointments;

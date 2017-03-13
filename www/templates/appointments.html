@@ -2,9 +2,9 @@
   <ion-content on-swipe-left="nextDate()" on-swipe-right="prevDate()" >
 
     <div class="row header" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0">
-      <span class="ion-arrow-left-a col" style="cursor: pointer;font-size: 25px;" ng-click="prevDate()"></span>
-      <span class="col" style="font-size: 14px;font-weight: bold">{{viewbleDate}}</span>
-      <span class="ion-arrow-right-a col" style="cursor: pointer;text-align: right;font-size: 25px;" ng-click="nextDate()"></span>
+      <span class="ion-arrow-left-a" style="cursor: pointer;font-size: 25px;width: 20%" ng-click="prevDate()"></span>
+      <span class="" style="font-size: 14px;font-weight: bold;width: 60%;text-align: center">{{viewbleDate}}</span>
+      <span class="ion-arrow-right-a" style="width: 20%;cursor: pointer;text-align: right;font-size: 25px;" ng-click="nextDate()"></span>
     </div>
     <div class="row" style="border-bottom: 1px solid #DADADA;padding: 6px 3px 6px 3px" ng-repeat="appointment in appointments">
       <div class="" style="width: 38%">{{appointment.start_at_time}}-{{appointment.end_at_time}}</div>
