@@ -25,8 +25,9 @@ angular.module('appointment.controllers', [])
             $ionicLoading.hide();
         },
         function(err) {
-            $ionicLoading.hide();
+          $ionicLoading.hide();
           console.log(err);
+          localStorage.setItem('access',null);
           $state.go('app.login');
         }
         );
