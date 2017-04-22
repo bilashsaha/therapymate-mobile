@@ -148,6 +148,6 @@ var app = angular.module('starter',
         $urlRouterProvider.otherwise('/app/login');
     });
 
-var apiHost = 'https://www.therapymate.com/';
-//var apiHost = 'https://therapymate-staging.herokuapp.com/';
+//var apiHost = 'https://www.therapymate.org/';
+var apiHost = 'https://therapymate-staging.herokuapp.com/';
 //var apiHost = 'http://192.168.1.109:3003/';

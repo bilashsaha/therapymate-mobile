@@ -49,7 +49,11 @@ angular.module('appointment.controllers', [])
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
     $scope.appointment = {"appointment": {}};
         $scope.isCalenderEvent = false;
+        $scope.display_procedure_code_modifiers = false;
+        $scope.payer = "";
+        $scope.procedure_code_modifiers = [];
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
+        $scope.appointment.appointment.units = 1;
         $scope.appointment.appointment.start_time = new Date("1970-01-01 "+(new Date().getHours()+1)+":00:00");
 
         if (typeof $location.search().date == 'undefined'){
@@ -59,9 +63,13 @@ angular.module('appointment.controllers', [])
             $scope.date =  $location.search().date
         }
 
+
+
         $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments/new.json?"+query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
+                $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
+                $scope.newAppointmentSetting.units_options = [1,2,3,4,5,6,7,8,9,10,11,12]
                 $ionicLoading.hide();
             },
             function(err) {
@@ -107,6 +115,41 @@ angular.module('appointment.controllers', [])
             $ionicLoading.show();
             $http.get(apiHost+"api/app/appointments/new.json?"+query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
                     $scope.newAppointmentSetting = response.data;
+                    $scope.display_procedure_code_modifiers = false;
+                    $scope.getDisplayProcedureCodeModifiers(selectedClinicianId)
+                    $ionicLoading.hide();
+                },
+                function(err) {
+                    $ionicLoading.hide();
+                    $scope.errorMessageDialog(err);
+                }
+            );
+        };
+
+        $scope.getDisplayProcedureCodeModifiers = function(clinician_id){
+            for(var i in $scope.newAppointmentSetting.clinicians)
+            {
+                if($scope.newAppointmentSetting.clinicians[i].id == clinician_id){
+                    $scope.display_procedure_code_modifiers =   $scope.newAppointmentSetting.clinicians[i].display_procedure_code_modifiers
+                    $scope.procedure_code_modifiers = $scope.newAppointmentSetting.clinicians[i].procedure_code_modifiers
+                    break;
+                }
+            }
+        }
+
+        $scope.getPayer = function(){
+            $ionicLoading.show();
+
+            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+query_access).then(function (response) {
+                    var patient_providers = response.data.patient_providers;
+                    if(patient_providers.length > 0){
+                        $scope.payer = patient_providers[0].name;
+                    }
+                    else{
+                        $scope.payer = "Cash Pay"
+                    }
+
+                    console.log($scope.payer)
                     $ionicLoading.hide();
                 },
                 function(err) {
@@ -115,6 +158,7 @@ angular.module('appointment.controllers', [])
                 }
             );
         }
+
         $scope.startTimeChanged = function(startTime){
             var duration = 0;
             for (i=0;i< $scope.newAppointmentSetting.service_codes.length; i++){
@@ -140,6 +184,8 @@ angular.module('appointment.controllers', [])
             $scope.modal = modal;
         });
 
+
+
         $scope.choice = {"val":"A"};
 
         $ionicLoading.show();
@@ -152,7 +198,10 @@ angular.module('appointment.controllers', [])
                 response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
                 $scope.appointment = {"appointment": response.data.appointment};
                 $scope.isCalenderEvent = $scope.appointment.appointment.patient_id == null;
-                console.log($scope.appointment.patient_id)
+                $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
+                $scope.newAppointmentSetting.units_options = [1,2,3,4,5,6,7,8,9,10,11,12]
+                $scope.getPayer();
+
                 $ionicLoading.hide();
             },
             function(err) {
@@ -247,6 +296,41 @@ angular.module('appointment.controllers', [])
                     $scope.errorMessageDialog(res)
                 })
         }
+
+
+        $scope.getDisplayProcedureCodeModifiers = function(clinician_id){
+            for(var i in $scope.newAppointmentSetting.clinicians)
+            {
+                if($scope.newAppointmentSetting.clinicians[i].id == clinician_id){
+                    $scope.display_procedure_code_modifiers =   $scope.newAppointmentSetting.clinicians[i].display_procedure_code_modifiers
+                    $scope.procedure_code_modifiers = $scope.newAppointmentSetting.clinicians[i].procedure_code_modifiers
+                    break;
+                }
+            }
+        }
+
+        $scope.getPayer = function(){
+            $ionicLoading.show();
+
+            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+query_access).then(function (response) {
+                    var patient_providers = response.data.patient_providers;
+                    if(patient_providers.length > 0){
+                        $scope.payer = patient_providers[0].name;
+                    }
+                    else{
+                        $scope.payer = "Cash Pay"
+                    }
+
+                    console.log($scope.payer)
+                    $ionicLoading.hide();
+                },
+                function(err) {
+                    $ionicLoading.hide();
+                    $scope.errorMessageDialog(err);
+                }
+            );
+        }
+
     })
 
     .controller('MissedAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {

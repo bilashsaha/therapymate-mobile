@@ -12,24 +12,15 @@
             <option value="">Please select</option>
           </select>
         </label>
-        <label class="item item-select item-input">
+
+        <label ng-if="display_procedure_code_modifiers" class="item item-select item-input">
           <span class="input-label">
-            <i class="icon ion-location"></i>
-            Location
+            <i class="icon ion-person"></i>
+            Code Modifier
           </span>
-          <select ng-model="appointment.appointment.location_id" ng-options="location.id as location.name for location in newAppointmentSetting.locations">
-            <option value="">Please select</option>
-          </select>
-        </label>
-        <label class="item item-select item-input">
-          <span class="input-label">
-            <i class="icon ion-chatbubbles"></i>
-            Session Type
-          </span>
-          <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes" ng-change="resetForm()">
-            <option value="">Please select</option>
-            <option ng-repeat="service_code in newAppointmentSetting.service_codes" ng-value="service_code.id">{{service_code.description}}</option>
-          </select>
+            <select ng-model="appointment.appointment.procedure_code_modifier_id" ng-options="procedure_code_modifier.id as procedure_code_modifier.name for procedure_code_modifier in procedure_code_modifiers">
+              <option value="">Please select</option>
+            </select>
         </label>
 
         <label class="item item-select item-input" ng-if="!isCalenderEvent">
@@ -37,7 +28,45 @@
             <i class="icon ion-android-person"></i>
             Patient
           </span>
-          <select ng-model="appointment.appointment.patient_id" ng-options="patient.id as patient.name for patient in newAppointmentSetting.patients">
+          <select ng-model="appointment.appointment.patient_id" ng-options="patient.id as patient.name for patient in newAppointmentSetting.patients" ng-change="getPayer()">
+            <option value="">Please select</option>
+          </select>
+        </label>
+
+        <label class="item item-input" ng-if="!isCalenderEvent" style="padding: 10px 16px 10px 16px !important;">
+          <span style="width: 30%">
+            <i class="icon ion-android-person"></i>
+            Payer
+          </span>
+          <span id="payer" style="text-align: right;width: 70%">{{payer}}</span>
+        </label>
+
+        <label class="item item-select item-input">
+          <span class="input-label">
+            <i class="icon ion-chatbubbles"></i>
+            Type
+          </span>
+          <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes" ng-change="resetForm()">
+            <option value="">Please select</option>
+            <option ng-repeat="service_code in newAppointmentSetting.service_codes" ng-value="service_code.id">{{service_code.description}}</option>
+          </select>
+        </label>
+
+        <label class="item item-select item-input"  ng-if="!isCalenderEvent">
+          <span class="input-label">
+            <i class="icon ion-chatbubbles"></i>
+            Unit
+          </span>
+          <select ng-model="appointment.appointment.units" ng-options="units for units in newAppointmentSetting.units_options">
+          </select>
+        </label>
+
+        <label class="item item-select item-input">
+          <span class="input-label">
+            <i class="icon ion-location"></i>
+            Location
+          </span>
+          <select ng-model="appointment.appointment.location_id" ng-options="location.id as location.name for location in newAppointmentSetting.locations">
             <option value="">Please select</option>
           </select>
         </label>

@@ -10,6 +10,7 @@ angular.module('starter.controllers', [])
   //});
         var access = JSON.parse(localStorage.getItem('access'));
         $scope.access = access;
+        $scope.selectedDate = null;
 
         if(access != null){
             query_access = "token="+$scope.access.token+"&email="+$scope.access.email;
@@ -40,12 +41,26 @@ angular.module('starter.controllers', [])
 
         }
 
+        $scope.goToNewAppointment = function(){
+          $state.go('app.new_appointments');
+        }
+
+
+        $scope.goToDate = function(selectedDate){
+          var year = selectedDate.getFullYear();
+          var month = selectedDate.getMonth()+1;
+          var day = selectedDate.getDate();
+          var timeZoneOffset = new Date().getTimezoneOffset();
+          $window.location.href = "#/app/appointments?date="+year+"-"+month+"-"+day+"&timezone_offset=-"+timeZoneOffset;
+          $window.location.reload()
+        }
+
         $scope.go = function ( path ) {
             $location.path( path );
         };
 
         $scope.showVersion = function(){
-            alert("Therapymate\nVersion: 1.0.0")
+            alert("Therapymate\nVersion: 1.0.1")
         }
 
         $(function(){
