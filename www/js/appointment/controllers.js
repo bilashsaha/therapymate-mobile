@@ -15,7 +15,7 @@ angular.module('appointment.controllers', [])
         $scope.timezone_offset = new Date().getTimezoneOffset();
 
         $ionicLoading.show();
-        $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+query_access).then(function (response) {
+        $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+$scope.query_access).then(function (response) {
             for (var i = 0; i < response.data.appointments.length; i++) {
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mmA')
                 response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time)).format('hh:mmA')
@@ -27,8 +27,8 @@ angular.module('appointment.controllers', [])
         function(err) {
           $ionicLoading.hide();
           console.log(err);
-          localStorage.setItem('access',null);
-          $state.go('app.login');
+          //localStorage.setItem('access',null);
+          //$state.go('app.login');
         }
         );
         $scope.nextDate = function(){
@@ -64,9 +64,8 @@ angular.module('appointment.controllers', [])
         }
 
 
-
         $ionicLoading.show();
-        $http.get(apiHost+"api/app/appointments/new.json?"+query_access).then(function (response) {
+        $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
                 $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
                 $scope.newAppointmentSetting.units_options = [1,2,3,4,5,6,7,8,9,10,11,12]
@@ -94,7 +93,7 @@ angular.module('appointment.controllers', [])
 
             $http({
                 method: 'POST',
-                url: apiHost+'api/app/appointments.json?'+query_access,
+                url: apiHost+'api/app/appointments.json?'+$scope.query_access,
                 data: $httpParamSerializerJQLike($scope.appointment),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
@@ -113,7 +112,7 @@ angular.module('appointment.controllers', [])
         };
         $scope.clinicianChanged = function(selectedClinicianId){
             $ionicLoading.show();
-            $http.get(apiHost+"api/app/appointments/new.json?"+query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
+            $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
                     $scope.newAppointmentSetting = response.data;
                     $scope.display_procedure_code_modifiers = false;
                     $scope.getDisplayProcedureCodeModifiers(selectedClinicianId)
@@ -140,7 +139,7 @@ angular.module('appointment.controllers', [])
         $scope.getPayer = function(){
             $ionicLoading.show();
 
-            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+query_access).then(function (response) {
+            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
                     var patient_providers = response.data.patient_providers;
                     if(patient_providers.length > 0){
                         $scope.payer = patient_providers[0].name;
@@ -189,7 +188,7 @@ angular.module('appointment.controllers', [])
         $scope.choice = {"val":"A"};
 
         $ionicLoading.show();
-        $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access).then(function (response) {
+        $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
                 response.data.appointment.start_at = moment(response.data.appointment.start_at).local().toDate();
                 console.log(response.data.appointment.start_at)
@@ -225,7 +224,7 @@ angular.module('appointment.controllers', [])
             }
 
             var access = JSON.parse(localStorage.getItem('access'));
-            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
             .then(
                 function(res) {
                     if(res.data){
@@ -284,7 +283,7 @@ angular.module('appointment.controllers', [])
 
 
             var access = JSON.parse(localStorage.getItem('access'));
-            $http.delete(url+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            $http.delete(url+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
                 .then(
                 function(res) {
                     $ionicLoading.hide();
@@ -312,7 +311,7 @@ angular.module('appointment.controllers', [])
         $scope.getPayer = function(){
             $ionicLoading.show();
 
-            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+query_access).then(function (response) {
+            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
                     var patient_providers = response.data.patient_providers;
                     if(patient_providers.length > 0){
                         $scope.payer = patient_providers[0].name;
@@ -338,7 +337,7 @@ angular.module('appointment.controllers', [])
         $scope.sign_this_form = {};
         $ionicLoading.show();
         var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost+"api/app/missed_appointment_notes/new.json?appointment_id="+$stateParams.id+"&"+query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+        $http.get(apiHost+"api/app/missed_appointment_notes/new.json?appointment_id="+$stateParams.id+"&"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
             .then(
             function(res) {
                 $scope.missedAppointmentSetting = res.data;
@@ -355,7 +354,7 @@ angular.module('appointment.controllers', [])
             json = {"missed_appointment_note": $scope.missed_appointment_note.missed_appointment_note, "sign_this_form": $scope.sign_this_form.sign_this_form}
             $http({
                 method: 'POST',
-                url: apiHost + 'api/app/missed_appointment_notes.json?appointment_id='+$stateParams.id+"&"+query_access,
+                url: apiHost + 'api/app/missed_appointment_notes.json?appointment_id='+$stateParams.id+"&"+$scope.query_access,
                 data: $httpParamSerializerJQLike(json),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(

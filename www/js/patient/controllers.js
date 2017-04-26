@@ -41,7 +41,7 @@ angular.module('patient.controllers', [])
 
 
         $ionicLoading.show();
-        $http.get(apiHost + "api/app/patients/new.json?"+query_access).then(function (response) {
+        $http.get(apiHost + "api/app/patients/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newPatientSetting = response.data;
                 $ionicLoading.hide()
             },
@@ -60,7 +60,7 @@ angular.module('patient.controllers', [])
             $ionicLoading.show();
             $http({
                 method: 'POST',
-                url: apiHost + 'api/app/patients.json?'+query_access,
+                url: apiHost + 'api/app/patients.json?'+$scope.query_access,
                 data: $httpParamSerializerJQLike(json),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
@@ -91,7 +91,7 @@ angular.module('patient.controllers', [])
         $scope.preferredphoneOptions = ["Home", "Mobile"];
         var access = JSON.parse(localStorage.getItem('access'));
         $ionicLoading.show();
-        $http.get(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+query_access).then(function (response) {
+        $http.get(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+$scope.query_access).then(function (response) {
                 $scope.newPatientSetting = response.data;
                 $scope.patient = {"patient": response.data.patient};
                 $ionicLoading.hide();
@@ -110,7 +110,7 @@ angular.module('patient.controllers', [])
 
             var access = JSON.parse(localStorage.getItem('access'));
             $ionicLoading.show();
-            $http.put(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+query_access, $httpParamSerializerJQLike($scope.patient), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            $http.put(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+$scope.query_access, $httpParamSerializerJQLike($scope.patient), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
                 .then(
                 function (res) {
                     if (res.data) {

@@ -13,7 +13,7 @@ angular.module('starter.controllers', [])
         $scope.selectedDate = null;
 
         if(access != null){
-            query_access = "token="+$scope.access.token+"&email="+$scope.access.email;
+            $scope.query_access = "token="+$scope.access.token+"&email="+$scope.access.email;
         }
 
         if(access == null &&  window.location.href.split("#")[1] != "/app/login"){
@@ -27,6 +27,7 @@ angular.module('starter.controllers', [])
 
         $scope.logout = function(){
             localStorage.setItem('access',null);
+            $scope.access = null
             $window.location.href = "#/app/login";
             $window.location.reload()
         }
@@ -77,18 +78,3 @@ angular.module('starter.controllers', [])
 
 
 })
-
-.controller('PlaylistsCtrl', function($scope) {
-  $scope.playlists = [
-    { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
-
-.controller('PlaylistCtrl', function($scope, $stateParams) {
-
-});
