@@ -4,8 +4,10 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
+var db = null;
 var app = angular.module('starter',
     [
+        'ngCordova',
         'ionic',
         'starter.controllers',
         'appointment.controllers',
@@ -13,7 +15,7 @@ var app = angular.module('starter',
         'patient.controllers'
     ])
 
-    .run(function ($ionicPlatform,$ionicPopup) {
+    .run(function ($ionicPlatform,$ionicPopup,$cordovaSQLite) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -31,6 +33,20 @@ var app = angular.module('starter',
                         });
                 }
             }
+
+            db = $cordovaSQLite.openDB({name:"therapymate.db" });
+            $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS users (email text, password text)");
+            $cordovaSQLite.execute(db, "INSERT INTO users(email,password) VALUES('abc@gmail.com','12345678')");
+            $cordovaSQLite.execute(db, "SELECT * FROM users").then(function(res) {
+                if(res.rows.length > 0) {
+                    alert("SELECTED -> " + res.rows.item(0).email + " " + res.rows.item(0).password);
+                } else {
+                    alert("No results found");
+                }
+            }, function (err) {
+                alert(err);
+            });
+
 
             if (window.cordova && window.cordova.plugins.Keyboard) {
                 cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);

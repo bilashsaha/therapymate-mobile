@@ -12,6 +12,9 @@
         },
         "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.ionicframework.therapymate664305"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.ionicframework.therapymate664305"
         }
     },
     "dependent_plugins": {}
