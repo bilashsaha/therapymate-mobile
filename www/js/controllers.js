@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $http,$httpParamSerializerJQLike,$state, $ionicSideMenuDelegate,$window,$ionicHistory,$location) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $http,$httpParamSerializerJQLike,$state, $ionicSideMenuDelegate,$window,$ionicHistory,$location, $ionicPopup) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -61,8 +61,13 @@ angular.module('starter.controllers', [])
         };
 
         $scope.showVersion = function(){
-            alert("Therapymate\nVersion: 1.0.1")
+            $ionicPopup.alert({
+                title: 'Therapymate',
+                template: "<center><strong>Version: 2.0.0</strong></center>"
+            });
+
         }
+
 
         $(function(){
             $("body").delegate(".masked_input", "focus", function(){
@@ -74,6 +79,14 @@ angular.module('starter.controllers', [])
             });
 
         });
+
+        Array.prototype.removeValue = function(name, value){
+            var array = $.map(this, function(v,i){
+                return v[name] === value ? null : v;
+            });
+            this.length = 0; //clear original array
+            this.push.apply(this, array); //push all elements except the one we want to delete
+        }
 
 
 

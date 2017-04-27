@@ -19,6 +19,21 @@ angular.module('login.controllers', [])
             });
 
         });
+        $scope.removeEmail = function(email){
+            $scope.users.removeValue("email", email);
+            db.transaction(function (tx) {
+                tx.executeSql('DELETE FROM users WHERE email = ?', [email], function(){
+                }, function(){});
+            });
+            return false;
+        }
+
+        $scope.loginAs = function(email,password){
+            $scope.loginData.username = email
+            $scope.loginData.password = password
+            $scope.loginData.remember_me = false;
+            $scope.doLogin();
+        }
 
 
         $scope.doLogin = function() {
@@ -36,17 +51,19 @@ angular.module('login.controllers', [])
                         var email = $scope.loginData.username;
                         var password = $scope.loginData.password;
 
-                        db.transaction(function (tx) {
-                            tx.executeSql("SELECT * FROM users where email=?", [email], function (tx, results) {
-                                if(results.rows.length <= 0){
-                                    tx.executeSql('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
-                                }
-                                else{
-                                    tx.executeSql("UPDATE users set email=?,password=? WHERE email=?", [email, password, email]);
-                                }
-                            });
+                        if($scope.loginData.remember_me){
+                            db.transaction(function (tx) {
+                                tx.executeSql("SELECT * FROM users where email=?", [email], function (tx, results) {
+                                    if(results.rows.length <= 0){
+                                        tx.executeSql('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
+                                    }
+                                    else{
+                                        tx.executeSql("UPDATE users set email=?,password=? WHERE email=?", [email, password, email]);
+                                    }
+                                });
 
-                        });
+                            });
+                        }
 
                         $ionicLoading.hide();
                         $window.location.href = "#/app/appointments";
@@ -60,6 +77,5 @@ angular.module('login.controllers', [])
             );
 
         };
-
 
     });
