@@ -49,6 +49,7 @@ angular.module('appointment.controllers', [])
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
     $scope.appointment = {"appointment": {}};
         $scope.isCalenderEvent = false;
+        $scope.units_options = [1,2,3,4,5,6,7,8,9,10,11,12];
         $scope.display_procedure_code_modifiers = false;
         $scope.payer = "";
         $scope.procedure_code_modifiers = [];
@@ -68,7 +69,6 @@ angular.module('appointment.controllers', [])
         $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
                 $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
-                $scope.newAppointmentSetting.units_options = [1,2,3,4,5,6,7,8,9,10,11,12]
                 $ionicLoading.hide();
             },
             function(err) {
@@ -183,7 +183,7 @@ angular.module('appointment.controllers', [])
             $scope.modal = modal;
         });
 
-
+        $scope.units_options = [1,2,3,4,5,6,7,8,9,10,11,12];
 
         $scope.choice = {"val":"A"};
 
@@ -198,7 +198,6 @@ angular.module('appointment.controllers', [])
                 $scope.appointment = {"appointment": response.data.appointment};
                 $scope.isCalenderEvent = $scope.appointment.appointment.patient_id == null;
                 $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
-                $scope.newAppointmentSetting.units_options = [1,2,3,4,5,6,7,8,9,10,11,12]
                 $scope.getPayer();
 
                 $ionicLoading.hide();

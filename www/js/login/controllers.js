@@ -9,16 +9,24 @@ angular.module('login.controllers', [])
             $window.location.reload();
         }
 
-        db.transaction(function (tx) {
-            tx.executeSql('SELECT * FROM users', [], function (tx, results) {
-                $scope.users = [];
-                var len = results.rows.length, i;
-                for (i = 0; i < len; i++) {
-                    $scope.users.push(results.rows.item(i))
-                }
-            });
+        try{
+            db = window.openDatabase({name: 'therapymate.db', location: 'default'}, function(){}, function(){},function(){});
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM users', [], function (tx, results) {
+                    $scope.users = [];
+                    var len = results.rows.length, i;
+                    for (i = 0; i < len; i++) {
+                        $scope.users.push(results.rows.item(i))
+                    }
+                });
 
-        });
+            });
+        }
+        catch(err) {
+
+        }
+
+
         $scope.removeEmail = function(email){
             $scope.users.removeValue("email", email);
             db.transaction(function (tx) {
