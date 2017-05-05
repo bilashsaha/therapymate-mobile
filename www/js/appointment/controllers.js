@@ -1,12 +1,12 @@
 angular.module('appointment.controllers', [])
-   .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
+   .controller('AppointmentsCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading, $ionicPlatform) {
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date())
         }
         else{
             $scope.date =  $location.search().date
-            $scope.date = moment($scope.date)
+            $scope.date = moment($scope.date,"YYYY-MM-DD")
         }
         $scope.viewbleDate = new Date((Date.parse($scope.date))).toString().split(' ').splice(0,4).join(' ');
 
