@@ -12,7 +12,8 @@ var app = angular.module('starter',
         'starter.controllers',
         'appointment.controllers',
         'login.controllers',
-        'patient.controllers'
+        'patient.controllers',
+        'ui.mask'
     ])
 
     .run(function ($ionicPlatform,$ionicPopup) {

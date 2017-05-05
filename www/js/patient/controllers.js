@@ -27,7 +27,7 @@ angular.module('patient.controllers', [])
         });
     })
 
-    .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike,$ionicLoading) {
+    .controller('NewPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike,$ionicLoading,$ionicPopup) {
         $scope.patient = {"patient": {}};
         $scope.provider = {"provider": {}};
         $scope.billing_setting = {"billing_setting": {}};
@@ -55,6 +55,13 @@ angular.module('patient.controllers', [])
             $scope.patient.patient.mobilephone = angular.element(document.getElementById('mobile_phone')).val();
             $scope.patient.patient.homephone = angular.element(document.getElementById('home_phone')).val();
             $scope.patient.patient.date_of_birth = angular.element(document.getElementById('dob')).val();
+            if ($scope.patient.patient.date_of_birth == null || $scope.patient.patient.date_of_birth == "" || moment($scope.patient.patient.date_of_birth)._d == "Invalid Date"){
+                $ionicPopup.alert({
+                    title: 'Error',
+                    template: "<center><strong>DOB is invalid</strong></center>"
+                });
+                return false;
+            }
 
             json = {"patient": $scope.patient.patient, "provider": $scope.provider.provider, "billing_setting": $scope.billing_setting}
             $ionicLoading.show();
@@ -84,7 +91,7 @@ angular.module('patient.controllers', [])
 
     })
 
-    .controller('EditPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
+    .controller('EditPatientCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike, $stateParams, $ionicLoading, $ionicPopup) {
         $scope.editable = false;
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
@@ -107,6 +114,13 @@ angular.module('patient.controllers', [])
             $scope.patient.patient.homephone = angular.element(document.getElementById('home_phone')).val();
             $scope.patient.patient.date_of_birth = angular.element(document.getElementById('dob')).val();
 
+            if ($scope.patient.patient.date_of_birth == null || $scope.patient.patient.date_of_birth == "" || moment($scope.patient.patient.date_of_birth)._d == "Invalid Date"){
+                $ionicPopup.alert({
+                    title: 'Error',
+                    template: "<center><strong>DOB is invalid</strong></center>"
+                });
+                return false;
+            }
 
             var access = JSON.parse(localStorage.getItem('access'));
             $ionicLoading.show();

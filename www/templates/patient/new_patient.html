@@ -33,7 +33,7 @@
               <i class="icon ion-calendar"></i>
               DOB
             </span>
-            <input type="tel" id="dob" class="masked_input_dob" placeholder="mm/dd/yyyy"
+            <input type="tel" id="dob" ui-mask="99/99/9999" placeholder="mm/dd/yyyy"
                    ng-model="patient.patient.date_of_birth">
           </label>
 
@@ -64,7 +64,7 @@
               <i class="icon ion-android-call"></i>
               Home Phone
             </span>
-            <input type="tel" id="home_phone" class="masked_input" ng-model="patient.patient.homephone">
+            <input type="tel" id="home_phone" ui-mask="999-999-9999" ng-model="patient.patient.homephone">
           </label>
 
           <label class="item item-input">
@@ -72,7 +72,7 @@
               <i class="icon ion-iphone"></i>
               Mobile Phone
             </span>
-            <input type="tel" id="mobile_phone" class="masked_input" ng-model="patient.patient.mobilephone">
+            <input type="tel" id="mobile_phone" ui-mask="999-999-9999" ng-model="patient.patient.mobilephone">
           </label>
           <label class="item item-select item-input">
             <span class="input-label">
