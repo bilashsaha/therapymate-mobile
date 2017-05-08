@@ -343,8 +343,8 @@ angular.module('appointment.controllers', [])
         }
 
         $scope.getPayer = function(){
+            if($scope.appointment.appointment.patient_id != null) {
             $ionicLoading.show();
-
             $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
                     var patient_providers = response.data.patient_providers;
                     if(patient_providers.length > 0){
@@ -362,6 +362,7 @@ angular.module('appointment.controllers', [])
                     $scope.errorMessageDialog(err);
                 }
             );
+            }
         }
 
     })
