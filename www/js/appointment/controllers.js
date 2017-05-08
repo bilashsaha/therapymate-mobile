@@ -21,7 +21,7 @@ angular.module('appointment.controllers', [])
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time))._d
                 response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time))._d
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
-                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time}
+                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time}
                 events.push(json)
             }
             $scope.appointments = response.data.appointments;
@@ -30,11 +30,6 @@ angular.module('appointment.controllers', [])
                 $('#calendar').fullCalendar({
                     header: false,
                     footer: false,
-                    viewRender: function(view, element) {
-                        element.find('.fc-day-header').hide();
-                        element.find(".fc-unselectable:first").hide();
-                        element.find("hr.fc-widget-header").hide();
-                    },
                     defaultView: 'agendaDay',
                     defaultDate: $scope.date,
                     navLinks: false,
@@ -43,7 +38,16 @@ angular.module('appointment.controllers', [])
                     eventLimit: false,
                     minTime: '06:00:00',
                     maxTime: '23:00:00',
-                    events: events,
+                    events: events ,
+                    eventColor: "rgba(17,162,229,0.3)",
+                    eventRender: function(event, element) {
+                        element.find('.fc-title').append(event.description);
+                    },
+                    viewRender: function(view, element) {
+                        element.find('.fc-day-header').hide();
+                        element.find(".fc-unselectable:first").hide();
+                        element.find("hr.fc-widget-header").hide();
+                    },
                     eventClick: function(calEvent, jsEvent, view) {
                         $window.location.href = "#/app/appointments/" + calEvent.id;
                     }
