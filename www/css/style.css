@@ -21,3 +21,11 @@ table#patient_list tr td{
     font-size: 14px !important;
     color: #2371b0;
 }
+
+a.fc-custom .fc-content {
+    display: inline-flex;
+}
+
+a.fc-custom .fc-title {
+    padding-left: 10px;
+}

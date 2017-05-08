@@ -50,6 +50,11 @@ angular.module('appointment.controllers', [])
                     },
                     eventClick: function(calEvent, jsEvent, view) {
                         $window.location.href = "#/app/appointments/" + calEvent.id;
+                    },
+                    eventAfterRender: function (event, element, view) {
+                        if (element.hasClass('fc-short')) {
+                            element.removeClass('fc-short').addClass('fc-custom')
+                        }
                     }
                 });
 
