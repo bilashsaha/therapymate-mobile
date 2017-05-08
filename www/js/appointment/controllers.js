@@ -15,14 +15,40 @@ angular.module('appointment.controllers', [])
         $scope.timezone_offset = new Date().getTimezoneOffset();
 
         $ionicLoading.show();
+        var events = [];
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+$scope.query_access).then(function (response) {
             for (var i = 0; i < response.data.appointments.length; i++) {
-                response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time)).format('hh:mmA')
-                response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time)).format('hh:mmA')
+                response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time))._d
+                response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time))._d
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
+                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time}
+                events.push(json)
             }
             $scope.appointments = response.data.appointments;
             $ionicLoading.hide();
+
+                $('#calendar').fullCalendar({
+                    header: false,
+                    footer: false,
+                    viewRender: function(view, element) {
+                        element.find('.fc-day-header').hide();
+                        element.find(".fc-unselectable:first").hide();
+                        element.find("hr.fc-widget-header").hide();
+                    },
+                    defaultView: 'agendaDay',
+                    defaultDate: $scope.date,
+                    navLinks: false,
+                    contentHeight: 'auto',
+                    editable: false,
+                    eventLimit: false,
+                    minTime: '06:00:00',
+                    maxTime: '23:00:00',
+                    events: events,
+                    eventClick: function(calEvent, jsEvent, view) {
+                        $window.location.href = "#/app/appointments/" + calEvent.id;
+                    }
+                });
+
         },
         function(err) {
           $ionicLoading.hide();
