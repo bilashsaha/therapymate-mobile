@@ -141,7 +141,7 @@
             </span>
             <span ng-if="!editable">{{patient.patient.preferredphone}}</span>
             <select ng-model="patient.patient.preferredphone"
-                    ng-options="preferredphone for preferredphone in preferredphoneOptions" ng-if="editable">
+                    ng-options="preferredphone[0] as preferredphone[1] for preferredphone in preferredphoneOptions" ng-if="editable">
               <option value="">Please select</option>
             </select>
           </label>

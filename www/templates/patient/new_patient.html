@@ -101,7 +101,7 @@
               Preferred phone
             </span>
             <select ng-model="patient.patient.preferredphone"
-                    ng-options="preferredphone for preferredphone in preferredphoneOptions">
+                    ng-options="preferredphone[0] as preferredphone[1] for preferredphone in preferredphoneOptions">
               <option value="">Please select</option>
             </select>
           </label>

@@ -37,7 +37,7 @@ angular.module('patient.controllers', [])
 
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
-        $scope.preferredphoneOptions = ["Home", "Mobile"];
+        $scope.preferredphoneOptions = [["homephone","Home"], ["mobilephone","Mobile"]];
 
 
         $ionicLoading.show();
@@ -95,7 +95,7 @@ angular.module('patient.controllers', [])
         $scope.editable = false;
         $scope.genderOptions = ["Male", "Female"];
         $scope.homephonemessageOptions = ["No Messages", "Voice Messages","Text Messages","Text & Voice Messages"];
-        $scope.preferredphoneOptions = ["Home", "Mobile"];
+      $scope.preferredphoneOptions = [["homephone","Home"], ["mobilephone","Mobile"]];
         var access = JSON.parse(localStorage.getItem('access'));
         $ionicLoading.show();
         $http.get(apiHost + "api/app/patients/" + $stateParams.id + ".json?"+$scope.query_access).then(function (response) {
