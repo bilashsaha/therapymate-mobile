@@ -14,6 +14,8 @@ angular.module('appointment.controllers', [])
 
         $scope.timezone_offset = new Date().getTimezoneOffset();
 
+        $scope.time = {};
+
         $ionicLoading.show();
         var events = [];
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+$scope.query_access).then(function (response) {
@@ -25,6 +27,7 @@ angular.module('appointment.controllers', [])
                 events.push(json)
             }
             $scope.appointments = response.data.appointments;
+            $scope.time = response.data.time
             $ionicLoading.hide();
 
                 $('#calendar').fullCalendar({
@@ -36,8 +39,8 @@ angular.module('appointment.controllers', [])
                     contentHeight: 'auto',
                     editable: false,
                     eventLimit: false,
-                    minTime: '06:00:00',
-                    maxTime: '23:00:00',
+                    minTime: $scope.time.start_time,
+                    maxTime: $scope.time.end_time,
                     events: events ,
                     eventColor: "rgba(17,162,229,0.3)",
                     eventRender: function(event, element) {
