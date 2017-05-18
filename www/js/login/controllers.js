@@ -10,7 +10,7 @@ angular.module('login.controllers', [])
         }
 
         try{
-            db = window.openDatabase({name: 'therapymate.db', location: 'default'}, function(){}, function(){},function(){});
+            db = window.openDatabase({name: 'therapymate.db', location: 'default',estimatedSize: 2*1024*1024 }, function(){}, function(){},function(){});
             db.transaction(function (tx) {
                 tx.executeSql('SELECT * FROM users', [], function (tx, results) {
                     $scope.users = [];
@@ -23,7 +23,7 @@ angular.module('login.controllers', [])
             });
         }
         catch(err) {
-
+          alert(err)
         }
 
 
