@@ -81,7 +81,11 @@ angular.module('login.controllers', [])
                                 });
 
                             });
-                        }
+                    } else {
+                    $ionicLoading.hide();
+                    $window.location.href = "#/app/appointments";
+                    $window.location.reload();
+                    }
 
                     }
                 },
