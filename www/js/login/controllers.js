@@ -63,19 +63,26 @@ angular.module('login.controllers', [])
                             db.transaction(function (tx) {
                                 tx.executeSql("SELECT * FROM users where email=?", [email], function (tx, results) {
                                     if(results.rows.length <= 0){
-                                        tx.executeSql('INSERT INTO users (email, password) VALUES (?, ?)', [email, password]);
+                                              tx.executeSql('INSERT INTO users (email, password) VALUES (?, ?)', [email, password],function(){
+                                                            
+                                                            $ionicLoading.hide();
+                                                            $window.location.href = "#/app/appointments";
+                                                            $window.location.reload();
+                                                            });
                                     }
                                     else{
-                                        tx.executeSql("UPDATE users set email=?,password=? WHERE email=?", [email, password, email]);
+                                              tx.executeSql("UPDATE users set email=?,password=? WHERE email=?", [email, password, email],function(){
+                                                            
+                                                            $ionicLoading.hide();
+                                                            $window.location.href = "#/app/appointments";
+                                                            $window.location.reload();
+                                                            });
                                     }
                                 });
 
                             });
                         }
 
-                        $ionicLoading.hide();
-                        $window.location.href = "#/app/appointments";
-                        $window.location.reload();
                     }
                 },
                 function(err) {
