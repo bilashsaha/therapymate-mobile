@@ -35,10 +35,16 @@ var app = angular.module('starter',
                 }
             }
 
-            db = window.openDatabase({name: 'therapymate.db', location: 'default'}, function(){}, function(){},function(){});
+            try{
+            db = window.openDatabase({name: 'therapymate.db', location: 'default',estimatedSize: 1*1024*1024}, function(){}, function(){},function(){});
             db.transaction(function (tx) {
               tx.executeSql("CREATE TABLE IF NOT EXISTS users (email text, password text)");
+              //tx.executeSql("INSERT INTO users VALUES('hola@kola.com','molaaa')";
             });
+}
+catch(err){
+alert("Error");
+}
 
 
             if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -172,6 +178,6 @@ var app = angular.module('starter',
         $urlRouterProvider.otherwise('/app/login');
     });
 
-//var apiHost = 'https://www.therapymate.org/';
-var apiHost = 'https://therapymate-staging.herokuapp.com/';
+var apiHost = 'https://www.therapymate.com/';
+//var apiHost = 'https://therapymate-staging.herokuapp.com/';
 //var apiHost = 'http://192.168.1.109:3003/';
