@@ -59,7 +59,7 @@ alert("Error");
         });
     })
 
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         $stateProvider
 
             .state('app', {
@@ -176,8 +176,9 @@ alert("Error");
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/app/login');
+        $ionicConfigProvider.backButton.previousTitleText(false);
     });
 
-var apiHost = 'https://www.therapymate.com/';
-//var apiHost = 'https://therapymate-staging.herokuapp.com/';
+//var apiHost = 'https://www.therapymate.com/';
+var apiHost = 'https://therapymate-staging.herokuapp.com/';
 //var apiHost = 'http://192.168.1.109:3003/';
