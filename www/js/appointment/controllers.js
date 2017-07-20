@@ -39,16 +39,17 @@ angular.module('appointment.controllers', [])
                     contentHeight: 'auto',
                     editable: false,
                     eventLimit: false,
-                    minTime: '00:00:00',
-                    maxTime: '23:00:00',
+                    minTime: $scope.time.start_time,
+                    maxTime: $scope.time.end_time,
                     events: events ,
                     eventColor: "rgba(17,162,229,0.3)",
                     eventRender: function(event, element) {
+                      console.log(event.service_code)
                       if(event.service_code == 'Missed') {
                         element.css('backgroundColor', '#FFCCCB');
                       }
-                      else if(event.service_code == 'Calendar') {
-                        element.css('backgroundColor', 'grey');
+                      else if(event.service_code == '') {
+                        element.css('backgroundColor', '#D3D3D3');
                       }
                         element.find('.fc-title').append(event.description);
                     },
