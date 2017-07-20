@@ -23,7 +23,7 @@ angular.module('appointment.controllers', [])
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time))._d
                 response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time))._d
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
-                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time}
+                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time,service_code: response.data.appointments[i].service_code}
                 events.push(json)
             }
             $scope.appointments = response.data.appointments;
@@ -39,11 +39,17 @@ angular.module('appointment.controllers', [])
                     contentHeight: 'auto',
                     editable: false,
                     eventLimit: false,
-                    minTime: $scope.time.start_time,
-                    maxTime: $scope.time.end_time,
+                    minTime: '00:00:00',
+                    maxTime: '23:00:00',
                     events: events ,
                     eventColor: "rgba(17,162,229,0.3)",
                     eventRender: function(event, element) {
+                      if(event.service_code == 'Missed') {
+                        element.css('backgroundColor', '#FFCCCB');
+                      }
+                      else if(event.service_code == 'Calendar') {
+                        element.css('backgroundColor', 'grey');
+                      }
                         element.find('.fc-title').append(event.description);
                     },
                     viewRender: function(view, element) {
