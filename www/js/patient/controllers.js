@@ -86,7 +86,7 @@ angular.module('patient.controllers', [])
         };
         $scope.selectedBillingType = function(){
             $scope.isInsuranceShowbale = event.target.options[event.target.selectedIndex].text == 'Insurance'
-            $scope.isCashShowbale = event.target.options[event.target.selectedIndex].text == 'Cash'
+            $scope.isCashShowbale = event.target.options[event.target.selectedIndex].text == 'Private Pay'
         }
 
     })
