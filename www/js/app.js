@@ -181,4 +181,5 @@ alert("Error");
 
 var apiHost = 'https://www.therapymate.com/';
 //var apiHost = 'https://therapymate-staging.herokuapp.com/';
-//var apiHost = 'http://192.168.1.109:3003/';
+//var apiHost = 'https://therapymate.net/';
+//var apiHost = 'http://192.168.1.105:3003/';
