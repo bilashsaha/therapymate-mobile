@@ -190,7 +190,7 @@ angular.module('appointment.controllers', [])
                         $scope.payer = patient_providers[0].name;
                     }
                     else{
-                        $scope.payer = "Cash Pay"
+                        $scope.payer = "Private Pay"
                     }
 
                     console.log($scope.payer)
@@ -361,7 +361,7 @@ angular.module('appointment.controllers', [])
                         $scope.payer = patient_providers[0].name;
                     }
                     else{
-                        $scope.payer = "Cash Pay"
+                        $scope.payer = "Private Pay"
                     }
 
                     console.log($scope.payer)
