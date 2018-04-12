@@ -23,8 +23,15 @@ angular.module('appointment.controllers', [])
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time))._d
                 response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time))._d
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
-                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time,service_code: response.data.appointments[i].service_code}
-                events.push(json)
+                var json = {id: response.data.appointments[i].id,
+                  title: response.data.appointments[i].patient_name,
+                  description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location,
+                  start: response.data.appointments[i].start_at_time,
+                  end: response.data.appointments[i].end_at_time,
+                  service_code: response.data.appointments[i].service_code,
+                  is_group_appointment:response.data.appointments[i].is_group_appointment
+                }
+                events.push(json);
             }
             $scope.appointments = response.data.appointments;
             $scope.time = response.data.time
@@ -42,14 +49,17 @@ angular.module('appointment.controllers', [])
                     minTime: $scope.time.start_time,
                     maxTime: $scope.time.end_time,
                     events: events ,
-                    eventColor: "rgba(17,162,229,0.3)",
+                    eventColor: "rgba(163,220,114,0.4)",
                     eventRender: function(event, element) {
-                      console.log(event.service_code)
                       if(event.service_code == 'Missed') {
                         element.css('backgroundColor', '#FFCCCB');
                       }
                       else if(event.service_code == '') {
                         element.css('backgroundColor', '#D3D3D3');
+                      }
+
+                      if(event.is_group_appointment){
+                        element.css('backgroundColor', 'rgba(173,216,230,0.4)');
                       }
                         element.find('.fc-title').append(event.description);
                     },
