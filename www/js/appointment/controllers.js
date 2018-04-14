@@ -139,12 +139,12 @@ angular.module('appointment.controllers', [])
             var start_at = $scope.appointment.appointment.start_at.toDateString();
             $scope.appointment.appointment.start_at = start_at + " " + start_time
             $scope.appointment.appointment.end_at = start_at + " " + end_time
-            $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
-            $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
+            // $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
+            // $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
 
-            if($scope.appointment.appointment.scheduled_until){
-                $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
-            }
+            // if($scope.appointment.appointment.scheduled_until){
+            //     $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
+            // }
 
             $http({
                 method: 'POST',
@@ -270,12 +270,12 @@ angular.module('appointment.controllers', [])
             var start_at = $scope.appointment.appointment.start_at.toDateString();
             $scope.appointment.appointment.start_at = start_at + " " + start_time
             $scope.appointment.appointment.end_at = start_at + " " + end_time
-            $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
-            $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
+            // $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
+            // $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
 
-            if($scope.appointment.appointment.scheduled_until){
-                $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
-            }
+            // if($scope.appointment.appointment.scheduled_until){
+            //     $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
+            // }
 
             var access = JSON.parse(localStorage.getItem('access'));
             $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
