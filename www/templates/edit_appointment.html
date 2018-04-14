@@ -155,7 +155,7 @@
           <div class="col">
             <button class="button button-block button-assertive" type="button" ng-click="appointment.appointment.frequency != 'One Time' ? showModal() : delete()">Delete</button>
           </div>
-          <div class="col">
+          <div class="col" ng-if="!appointment.appointment.is_group_appointment">
             <a class="button button-block button-dark" href="#/app/appointments/missed/{{appointment.appointment.id}}">Missed</a>
           </div>
         </div>
