@@ -23,8 +23,15 @@ angular.module('appointment.controllers', [])
                 response.data.appointments[i].start_at_time = moment(new Date(response.data.appointments[i].start_at_time))._d
                 response.data.appointments[i].end_at_time = moment(new Date(response.data.appointments[i].end_at_time))._d
                 response.data.appointments[i].service_code = response.data.appointments[i].service_code == 'Calendar Event' ? 'Calendar' : response.data.appointments[i].service_code
-                var json = {id: response.data.appointments[i].id,title: response.data.appointments[i].patient_name, description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location, start: response.data.appointments[i].start_at_time, end: response.data.appointments[i].end_at_time,service_code: response.data.appointments[i].service_code}
-                events.push(json)
+                var json = {id: response.data.appointments[i].id,
+                  title: response.data.appointments[i].patient_name,
+                  description: "&nbsp;&nbsp;"+response.data.appointments[i].service_code + "&nbsp;&nbsp;" + response.data.appointments[i].location,
+                  start: response.data.appointments[i].start_at_time,
+                  end: response.data.appointments[i].end_at_time,
+                  service_code: response.data.appointments[i].service_code,
+                  is_group_appointment:response.data.appointments[i].is_group_appointment
+                }
+                events.push(json);
             }
             $scope.appointments = response.data.appointments;
             $scope.time = response.data.time
@@ -42,14 +49,17 @@ angular.module('appointment.controllers', [])
                     minTime: $scope.time.start_time,
                     maxTime: $scope.time.end_time,
                     events: events ,
-                    eventColor: "rgba(17,162,229,0.3)",
+                    eventColor: "rgba(163,220,114,0.4)",
                     eventRender: function(event, element) {
-                      console.log(event.service_code)
                       if(event.service_code == 'Missed') {
                         element.css('backgroundColor', '#FFCCCB');
                       }
                       else if(event.service_code == '') {
                         element.css('backgroundColor', '#D3D3D3');
+                      }
+
+                      if(event.is_group_appointment){
+                        element.css('backgroundColor', 'rgba(173,216,230,0.4)');
                       }
                         element.find('.fc-title').append(event.description);
                     },
@@ -129,12 +139,12 @@ angular.module('appointment.controllers', [])
             var start_at = $scope.appointment.appointment.start_at.toDateString();
             $scope.appointment.appointment.start_at = start_at + " " + start_time
             $scope.appointment.appointment.end_at = start_at + " " + end_time
-            $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
-            $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
+            // $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
+            // $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
 
-            if($scope.appointment.appointment.scheduled_until){
-                $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
-            }
+            // if($scope.appointment.appointment.scheduled_until){
+            //     $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
+            // }
 
             $http({
                 method: 'POST',
@@ -190,7 +200,7 @@ angular.module('appointment.controllers', [])
                         $scope.payer = patient_providers[0].name;
                     }
                     else{
-                        $scope.payer = "Cash Pay"
+                        $scope.payer = "Private Pay"
                     }
 
                     console.log($scope.payer)
@@ -260,12 +270,12 @@ angular.module('appointment.controllers', [])
             var start_at = $scope.appointment.appointment.start_at.toDateString();
             $scope.appointment.appointment.start_at = start_at + " " + start_time
             $scope.appointment.appointment.end_at = start_at + " " + end_time
-            $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
-            $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
+            // $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
+            // $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
 
-            if($scope.appointment.appointment.scheduled_until){
-                $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
-            }
+            // if($scope.appointment.appointment.scheduled_until){
+            //     $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
+            // }
 
             var access = JSON.parse(localStorage.getItem('access'));
             $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
@@ -361,7 +371,7 @@ angular.module('appointment.controllers', [])
                         $scope.payer = patient_providers[0].name;
                     }
                     else{
-                        $scope.payer = "Cash Pay"
+                        $scope.payer = "Private Pay"
                     }
 
                     console.log($scope.payer)
