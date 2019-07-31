@@ -29,3 +29,7 @@ a.fc-custom .fc-content {
 a.fc-custom .fc-title {
     padding-left: 10px;
 }
+
+tr.deactivated {
+background:#F3F3F3;
+}

@@ -16,6 +16,10 @@ angular.module('appointment.controllers', [])
 
         $scope.time = {};
 
+        $scope.is_active = true
+
+        var day = $scope.date.format("dddd").toLowerCase();
+
         $ionicLoading.show();
         var events = [];
         $http.get(apiHost+"api/app/appointments.json?date="+$scope.formatted_date+"&timezone_offset="+$scope.timezone_offset+"&"+$scope.query_access).then(function (response) {
@@ -34,7 +38,13 @@ angular.module('appointment.controllers', [])
                 events.push(json);
             }
             $scope.appointments = response.data.appointments;
-            $scope.time = response.data.time
+            $scope.time.start_time = moment(response.data.work_hour["start_"+day]).format("HH:mm:ss")
+            $scope.time.end_time = moment(response.data.work_hour["end_"+day]).format("HH:mm:ss")
+
+            $scope.is_active = response.data.work_hour["show_"+day]
+
+            console.log($scope.is_active)
+
             $ionicLoading.hide();
 
                 $('#calendar').fullCalendar({
@@ -67,6 +77,12 @@ angular.module('appointment.controllers', [])
                         element.find('.fc-day-header').hide();
                         element.find(".fc-unselectable:first").hide();
                         element.find("hr.fc-widget-header").hide();
+                        if(!$scope.is_active) {
+                          $('#calendar').find("tr").addClass("deactivated");
+                        } else {
+                          $('#calendar').find("tr").removeClass("deactivated");
+                        }
+
                     },
                     eventClick: function(calEvent, jsEvent, view) {
                         $window.location.href = "#/app/appointments/" + calEvent.id;
