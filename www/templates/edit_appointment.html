@@ -23,12 +23,17 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
   <ion-content>
+    <div class="error-messages" style="display:none;">
+      <ul class="error-list">
+        <li ng-repeat="errorMessage in errorMessages">{{errorMessage}}</li>
+      </ul>
+    </div>
     <form ng-submit="updateAppointment()">
       <div class="list">
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-person"></i>
-            Clinician
+            Clinician *
           </span>
           <select ng-change="clinicianChanged(appointment.appointment.clinician_id)" ng-model="appointment.appointment.clinician_id" ng-options="clinician.id as clinician.name for clinician in newAppointmentSetting.clinicians">
             <option value="">Please select</option>
@@ -38,7 +43,7 @@
         <label ng-if="display_procedure_code_modifiers" class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-person"></i>
-            Code Modifier
+            Code Modifier *
           </span>
           <select ng-model="appointment.appointment.procedure_code_modifier_id" ng-options="procedure_code_modifier.id as procedure_code_modifier.name for procedure_code_modifier in procedure_code_modifiers">
             <option value="">Please select</option>
@@ -48,7 +53,7 @@
         <label class="item item-select item-input" ng-if="!isCalenderEvent">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
-            Patient
+            Patient *
           </span>
           <select ng-model="appointment.appointment.patient_id" ng-options="patient.id as patient.name for patient in newAppointmentSetting.patients" ng-change="getPayer()">
             <option value="">Please select</option>
@@ -66,7 +71,7 @@
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-chatbubbles"></i>
-            Type
+            Type *
           </span>
           <select ng-model="appointment.appointment.service_code_id" ng-options="service_code.id as service_code.description for service_code in newAppointmentSetting.service_codes" ng-change="resetForm()">
             <option value="">Please select</option>
@@ -77,7 +82,7 @@
         <label class="item item-select item-input"  ng-if="!isCalenderEvent">
           <span class="input-label">
             <i class="icon ion-chatbubbles"></i>
-            Unit
+            Unit *
           </span>
           <select ng-model="appointment.appointment.units" ng-options="units for units in units_options">
           </select>
@@ -86,7 +91,7 @@
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-location"></i>
-            Location
+            Location *
           </span>
           <select ng-model="appointment.appointment.location_id" ng-options="location.id as location.name for location in newAppointmentSetting.locations">
             <option value="">Please select</option>
@@ -96,28 +101,28 @@
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-calendar"></i>
-            Date
+            Date *
           </span>
           <input type="date" ng-model="appointment.appointment.start_at">
         </label>
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-ios-time"></i>
-            Time
+            Time *
           </span>
           <input type="time" ng-model="appointment.appointment.start_time" ng-change="startTimeChanged(appointment.appointment.start_time)">
         </label>
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-ios-time"></i>
-            Until
+            Until *
           </span>
           <input type="time" ng-model="appointment.appointment.end_time">
         </label>
         <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-ios-refresh"></i>
-            Frequency
+            Frequency *
           </span>
           <select ng-model="appointment.appointment.frequency" ng-options="frequency for frequency in newAppointmentSetting.frequencies">
             <option value="">Please select</option>

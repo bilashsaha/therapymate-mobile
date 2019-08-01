@@ -118,7 +118,7 @@ angular.module('appointment.controllers', [])
     })
 
 .controller('NewAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike,$ionicLoading) {
-    $scope.appointment = {"appointment": {}};
+        $scope.appointment = {"appointment": {}};
         $scope.isCalenderEvent = false;
         $scope.units_options = [1,2,3,4,5,6,7,8,9,10,11,12];
         $scope.display_procedure_code_modifiers = false;
@@ -143,29 +143,73 @@ angular.module('appointment.controllers', [])
                 $ionicLoading.hide();
             },
             function(err) {
+                console.log(err)
                 $ionicLoading.hide();
                 $scope.errorMessageDialog(err);
             }
         );
 
-        $scope.createAppointment = function(){
-            $ionicLoading.show();
-            var start_time = $scope.appointment.appointment.start_time.toTimeString().split(" ")[0];
-            var end_time = $scope.appointment.appointment.end_time.toTimeString().split(" ")[0];
-            var start_at = $scope.appointment.appointment.start_at.toDateString();
-            $scope.appointment.appointment.start_at = start_at + " " + start_time
-            $scope.appointment.appointment.end_at = start_at + " " + end_time
-            // $scope.appointment.appointment.start_at = new Date(new Date($scope.appointment.appointment.start_at).toISOString());
-            // $scope.appointment.appointment.end_at = new Date(new Date($scope.appointment.appointment.end_at).toISOString());
+        $scope.errorMessages = []
+        $scope.startTimeOfDay = null
+        $scope.endTimeOfDay = null
 
-            // if($scope.appointment.appointment.scheduled_until){
-            //     $scope.appointment.appointment.scheduled_until = new Date(new Date($scope.appointment.appointment.scheduled_until).toISOString());
-            // }
+        $scope.timeOfTheDay = function(date,time){
+           time = moment(time).format('ha');
+           time = moment((date.format("YYYY-MM-DD") + ' ' + time),"YYYY-MM-DD ha");
+           return time;
+         };
+
+         $scope.calculateStartAndEndOfDay = function(startTimeOfDay, endTimeOfDay, date){
+             date = moment(date)
+             startTimeOfDay = $scope.timeOfTheDay(date, startTimeOfDay)
+             $scope.startTimeOfDay = startTimeOfDay.subtract(1, 'second');
+             $scope.endTimeOfDay = $scope.timeOfTheDay(date, endTimeOfDay)
+           };
+
+        $scope.createAppointment = function(){
+
+            var calenderEvent = $scope.isCalenderEvent
+            var appointment = {}
+            var appointment = jQuery.extend(true, {}, $scope.appointment.appointment)
+
+            if ($scope.checkAppointmentErrors(appointment,calenderEvent)) {
+               return false;
+            }
+
+//            $ionicLoading.show();
+
+            console.log($scope.appointment.appointment)
+
+            var start_time = appointment.start_time.toTimeString().split(" ")[0];
+            var end_time = appointment.end_time.toTimeString().split(" ")[0];
+            var start_at = appointment.start_at.toDateString();
+            appointment.start_at = start_at + " " + start_time
+            appointment.end_at = start_at + " " + end_time
+
+
+            var dayName = moment(appointment.start_at).format('dddd').toLowerCase();
+            var startOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["start_"+dayName]);
+            var endOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["end_"+dayName]);
+            $scope.calculateStartAndEndOfDay(startOfDay,endOfDay, appointment.start_at);
+            var slotNotAvailable = !moment(appointment.start_at).isBetween($scope.startTimeOfDay,$scope.endTimeOfDay);
+            var dayNotAvailable = $scope.newAppointmentSetting.work_hour.all_clinicians_turn_off_days["clinician_"+appointment.clinician_id].indexOf(moment(appointment.start_at).day()) > -1
+
+
+            if(dayNotAvailable && !calenderEvent ){
+              alert("This day is not available.")
+              return false;
+            }
+            else if(slotNotAvailable && !calenderEvent ) {
+              alert("This slot is not available.")
+              return false;
+            }
+
+
 
             $http({
                 method: 'POST',
                 url: apiHost+'api/app/appointments.json?'+$scope.query_access,
-                data: $httpParamSerializerJQLike($scope.appointment),
+                data: $httpParamSerializerJQLike({"appointment": appointment}),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             }).then(
                 function(res) {
@@ -181,6 +225,47 @@ angular.module('appointment.controllers', [])
                 })
 
         };
+
+        $scope.checkAppointmentErrors = function(appointment,calenderEvent) {
+         $scope.errorMessages = []
+         if(appointment.clinician_id == null && !calenderEvent) {
+           $scope.errorMessages.push("Must Select a Clinician")
+         }
+         if(appointment.patient_id == null && !calenderEvent) {
+           $scope.errorMessages.push("Must Select a Patient")
+         }
+         if(appointment.procedure_code_modifier_id == null) {
+           $scope.errorMessages.push("Must Select a Code Modifier")
+         }
+         if(appointment.service_code_id == null) {
+           $scope.errorMessages.push("Must Select a Type")
+         }
+         if(appointment.location_id == null) {
+           $scope.errorMessages.push("Must Select a Location")
+         }
+         if(appointment.start_at == null) {
+           $scope.errorMessages.push("Date can not be blank")
+         }
+         if(appointment.start_time == null) {
+           $scope.errorMessages.push("Time can not be blank")
+         }
+         if(appointment.end_time == null) {
+           $scope.errorMessages.push("Until can not be blank")
+         }
+         if(appointment.frequency == null) {
+           $scope.errorMessages.push("Must Select Frequency")
+         }
+
+         if($scope.errorMessages.length > 0) {
+           $("div.error-messages").show();
+           return true
+         }
+         else {
+           return false
+         }
+
+        };
+
         $scope.clinicianChanged = function(selectedClinicianId){
             $ionicLoading.show();
             $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
@@ -242,6 +327,7 @@ angular.module('appointment.controllers', [])
         }
         $scope.resetForm = function(){
             $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
+            console.log($scope.isCalenderEvent)
         }
 })
 
@@ -278,8 +364,11 @@ angular.module('appointment.controllers', [])
                 $scope.errorMessageDialog(err)
             }
         );
-
+        $scope.errorMessages = []
         $scope.updateAppointment = function(){
+        if ($scope.checkAppointmentErrors($scope.appointment.appointment)) {
+                       return false;
+                    }
             $ionicLoading.show();
             var start_time = $scope.appointment.appointment.start_time.toTimeString().split(" ")[0];
             var end_time = $scope.appointment.appointment.end_time.toTimeString().split(" ")[0];
@@ -309,6 +398,47 @@ angular.module('appointment.controllers', [])
                 })
 
         };
+
+        $scope.checkAppointmentErrors = function(appointment) {
+           $scope.errorMessages = []
+           if(appointment.clinician_id == null) {
+             $scope.errorMessages.push("Must Select a Clinician")
+           }
+           if(appointment.patient_id == null) {
+             $scope.errorMessages.push("Must Select a Patient")
+           }
+           if(appointment.procedure_code_modifier_id == null) {
+             $scope.errorMessages.push("Must Select a Code Modifier")
+           }
+           if(appointment.service_code_id == null) {
+             $scope.errorMessages.push("Must Select a Type")
+           }
+           if(appointment.location_id == null) {
+             $scope.errorMessages.push("Must Select a Location")
+           }
+           if(appointment.start_at == null) {
+             $scope.errorMessages.push("Date can not be blank")
+           }
+           if(appointment.start_time == null) {
+             $scope.errorMessages.push("Time can not be blank")
+           }
+           if(appointment.end_time == null) {
+             $scope.errorMessages.push("Until can not be blank")
+           }
+           if(appointment.frequency == null) {
+             $scope.errorMessages.push("Must Select Frequency")
+           }
+
+           if($scope.errorMessages.length > 0) {
+             $("div.error-messages").show();
+             return true
+           }
+           else {
+             return false
+           }
+
+          };
+
         $scope.resetForm = function(){
             $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
         }

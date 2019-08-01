@@ -33,3 +33,10 @@ a.fc-custom .fc-title {
 tr.deactivated {
 background:#F3F3F3;
 }
+.error-messages {
+ color: red;
+ padding-left: 10px;
+}
+ul.error-list li {
+ list-style-type: circle;
+}
