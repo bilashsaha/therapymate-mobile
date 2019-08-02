@@ -35,7 +35,8 @@ background:#F3F3F3;
 }
 .error-messages {
  color: red;
- padding-left: 10px;
+ padding-left: 30px;
+  background: #FFF1F2;
 }
 ul.error-list li {
  list-style-type: circle;
