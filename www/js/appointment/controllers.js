@@ -485,6 +485,9 @@ angular.module('appointment.controllers', [])
           appointment.start_at = start_at + " " + start_time
           appointment.end_at = start_at + " " + end_time
 
+          $scope.appointment.appointment.start_at = start_at + " " + start_time
+          $scope.appointment.appointment.end_at = start_at + " " + end_time
+
 
           var dayName = moment(appointment.start_at).format('dddd').toLowerCase();
           var startOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["start_"+dayName]);
