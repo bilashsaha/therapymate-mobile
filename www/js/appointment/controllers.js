@@ -279,7 +279,7 @@ angular.module('appointment.controllers', [])
            $scope.errorMessages.push("Must Select a Clinician")
          }
          if(appointment.patient_id == null && !calenderEvent) {
-           $scope.errorMessages.push("Must Select a Patient")
+           $scope.errorMessages.push("Must Select a Client")
          }
          if(appointment.procedure_code_modifier_id == null) {
            $scope.errorMessages.push("Must Select a Code Modifier")
@@ -535,7 +535,7 @@ angular.module('appointment.controllers', [])
              $scope.errorMessages.push("Must Select a Clinician")
            }
            if(appointment.patient_id == null) {
-             $scope.errorMessages.push("Must Select a Patient")
+             $scope.errorMessages.push("Must Select a Client")
            }
            if(appointment.procedure_code_modifier_id == null) {
              $scope.errorMessages.push("Must Select a Code Modifier")

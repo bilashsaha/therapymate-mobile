@@ -53,7 +53,7 @@
         <label class="item item-select item-input" ng-if="!isCalenderEvent">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
-            Patient *
+            Client *
           </span>
           <select ng-model="appointment.appointment.patient_id" ng-options="patient.id as patient.name for patient in newAppointmentSetting.patients" ng-change="getPayer()">
             <option value="">Please select</option>
