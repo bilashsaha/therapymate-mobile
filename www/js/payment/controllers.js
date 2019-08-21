@@ -111,8 +111,11 @@ angular.module('payment.controllers', [])
       };
 
       $scope.amountChanged = function(changedAmount) {
-        console.log(changedAmount);
-        console.log($('body').length);
+        amountWatcher(false);
+      };
+
+      $scope.invoiceAmountChanged = function(changedAmount) {
+        invoiceWatcher(false);
       };
 
 

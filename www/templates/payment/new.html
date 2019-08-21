@@ -29,7 +29,12 @@
             Credit *
           </span>
             <span>{{selectedPatient.credits}}</span>
+            <input type="hidden" id="credit" value="{{selectedPatient.credits}}"/>
           </label>
+
+          <ion-checkbox id="use_credit" onclick="updateInvoiceAmount()">
+            Use Credit
+          </ion-checkbox>
 
           <label class="item item-select item-input">
           <span class="input-label">
@@ -67,7 +72,7 @@
               <i class="icon ion-person"></i>
               Amount *
             </span>
-            <input type="number" ng-model="payment.payment.amount" id="amount" ng-change="amountChanged(payment.payment.amount)">
+            <input type="number" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()" >
           </label>
 
           <label class="item item-select item-input">
@@ -111,10 +116,14 @@
               <tr ng-repeat="invoice in unpaidInvoices" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0;">
                 <td>
                   <strong>Date:</strong> {{invoice.invoice_date}} <br/>
-                  <strong>Balance:</strong> ${{invoice.amount}}  <br/>
+                  <strong>Balance:</strong> <span class="pat_bal">${{invoice.amount}}</span>  <br/>
                   <strong>Invoice#:</strong> {{invoice.invoice_number}}
                 </td>
-                <td style="vertical-align:middle"><input type="number" style="text-align: right;font-size: 15pt" placeholder="Enter Amount" ></td>
+                <td style="vertical-align:middle"><input type="number" style="text-align: right;font-size: 15pt" placeholder="Enter Amount" class="event_amount" onkeyup="invoiceWatcher()" ></td>
+              </tr>
+              <tr id="credit_row" style="display: none;">
+                <td><strong>Credit</strong></td>
+                <td style="vertical-align:middle;text-align: right;font-size: 15pt" id="remaining_credit"></td>
               </tr>
             </table>
           </label>
