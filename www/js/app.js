@@ -13,6 +13,7 @@ var app = angular.module('starter',
         'appointment.controllers',
         'login.controllers',
         'patient.controllers',
+        'payment.controllers',
         'ui.mask'
     ])
 
@@ -87,6 +88,39 @@ alert("Error");
                     }
                 }
             })
+
+            .state('app.payments', {
+              url: '/payments',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/payment/payments.html',
+                  controller: 'PaymentsCtrl'
+                }
+              }
+            })
+
+          .state('app.new_payment', {
+            url: '/payments/new',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/payment/new.html',
+                controller: 'NewPaymentCtrl'
+              }
+            }
+          })
+
+
+          .state('app.show_payments', {
+            url: '/payments/:id',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/payment/show.html',
+                controller: 'ShowPaymentCtrl'
+              }
+            }
+          })
+
+
 
             .state('app.patients', {
                 url: '/patients',

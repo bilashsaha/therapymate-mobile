@@ -1,0 +1,23 @@
+<ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
+<ion-content>
+  <ion-refresher
+          pulling-text="Pull to refresh..."
+          on-refresh="doRefresh()">
+  </ion-refresher>
+
+  <table width="99%" id="payment_list" style="margin: 0 auto">
+    <thead>
+    <tr style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
+      <th class="payment_header" style="text-align: left">Date</th>
+      <th class="payment_header"  style="text-align: left">Amount</th>
+      <th class="payment_header"  style="text-align: left">Clinet</th>
+    </tr>
+    </thead>
+    <tr ng-repeat="payment in payments" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0">
+      <td><a class="col" href="#/app/payments/{{payment.id}}">{{payment.payment_date}}</a></td>
+      <td>{{payment.amount}}</td>
+      <td>{{payment.patient.name}}</td>
+    </tr>
+  </table>
+  </ion-content>
+</ion-view>
