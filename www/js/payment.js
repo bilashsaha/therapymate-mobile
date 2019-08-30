@@ -1,12 +1,5 @@
-$(document).ready(function(){
-  $(".chosen-container").each(function(index, value){ $(value).css({width:"100%"}) });
+angular.element(document).ready(function(){
 
-  $('#payment_type').on('change', function(){
-    updatePaymentType();
-  });
-  $('#payment_methods').on('change', function(){
-    updatePaymentMethod();
-  });
   if($('#payment_patient_payment_method_id option').length > 2){
     first_card = $('#payment_patient_payment_method_id option')[2].value;
     $('#payment_patient_payment_method_id').val(first_card);
@@ -106,7 +99,7 @@ function updatePaymentType(){
 		$("#payment_number").hide();
 	}
 	if(value == "Credit Card"){
-		$('#payment_credit_card').show();
+		$('#card_fields').show();
     updatePaymentMethod();
     if($('#preferred_credit_card').length > 0){
       $("#payment_number").show();
@@ -114,7 +107,7 @@ function updatePaymentType(){
       $("#payment_number").hide();
     }
 	} else {
-		$('#payment_credit_card').hide();
+		$('#card_fields').hide();
 	}
 }
 

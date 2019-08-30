@@ -41,3 +41,17 @@ background:#F3F3F3;
 ul.error-list li {
  list-style-type: circle;
 }
+
+.table_cards {
+  width: 100%;
+  border: 1px solid #DFDFDF;
+  padding: 10px;
+}
+
+.table_cards .col {
+  border: 1px solid #DADADA;
+}
+
+div.card_fields {
+  margin-top: 15px;
+}

@@ -33,10 +33,15 @@ angular.module('payment.controllers', [])
         $scope.payment.payment.clinician_id = $scope.access.clinician_id;
         $scope.payment.payment.currency = 'usd';
         $scope.payment.payment.preferred_credit_card = 'Visa';
+        $scope.patientPaymentMethods = [];
+        $scope.cardTypes = [];
+        $scope.patient_new_payment_method = {"patient_new_payment_method":{}}
+
 
         $ionicLoading.show();
         $http.get(apiHost + "api/app/payments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newPaymentSetting = response.data;
+                $card.mount('#new_card');
                 $ionicLoading.hide()
             },
             function (err) {
@@ -46,8 +51,52 @@ angular.module('payment.controllers', [])
         );
 
         $scope.createPayment = function () {
+          var hasError = false
+          $ionicLoading.show();
+          if ($('#payment_type option:selected').text() == "Credit Card") {
+            if($('.patient_payment_method:checked').val() == 'new_card') {
+              var $form = $('#new_payment');
+              var extraDetails = {
+                name: $form.find('#payment_patient_payment_method_cardholder_name').val(),
+                address_line1: $form.find('#payment_patient_payment_method_address_line1').val(),
+                address_line2: $form.find('#payment_patient_payment_method_address_line2').val(),
+                address_city: $form.find('#payment_patient_payment_method_address_city').val(),
+                address_state: $form.find('#payment_patient_payment_method_address_state').val(),
+                address_zip: $form.find('#payment_patient_payment_method_address_zip').val(),
+              };
+
+              stripe.createToken($card, extraDetails).then(function(result) {
+                if (result.error) {
+                  hasError = true
+                  alert(result.error.message)
+                } else {
+                  var token = result.token;
+                  $scope.payment.payment.stripe_card_token = token.id
+                }
+              });
+            } else {
+              $scope.payment.payment.patient_payment_method_id = $('.patient_payment_method:checked').val()
+            }
+            if(hasError){
+              return false;
+            }
+          }
+
+
+          var payment_invoice_events = []
+
+          $(".event_amount").each(function(){
+            if (Number($(this).val()) > 0 ) {
+              payment_invoice_events.push({invoice_id:$(this).attr('invoice_id'),amount:$(this).val()})
+            }
+          })
+
+          $scope.payment.payment.payment_invoice_events = payment_invoice_events
+
+
 
           console.log($scope.payment.payment)
+          console.log($scope.patient_new_payment_method)
 
           return false;
 
@@ -83,24 +132,25 @@ angular.module('payment.controllers', [])
                 })
 
         };
+
+
         $scope.selectedBillingType = function(){
             $scope.isInsuranceShowbale = event.target.options[event.target.selectedIndex].text == 'Insurance'
             $scope.isCashShowbale = event.target.options[event.target.selectedIndex].text == 'Private Pay'
         };
+
 
       $scope.patientChanged = function(selectedPatientId){
         $ionicLoading.show();
         $http.get(apiHost+"api/app/invoices.json?"+$scope.query_access+"&patient_unpaid=true&patient_id="+selectedPatientId).then(function (response) {
             $scope.unpaidInvoices = response.data.invoices;
             $scope.selectedPatient = response.data.patient;
-
-
-
+            $scope.patientPaymentMethods = response.data.patient_payment_methods;
+            $scope.cardTypes = response.data.card_types;
             for (var i = 0; i < $scope.unpaidInvoices.length; i++) {
               $scope.unpaidInvoices[i].invoice_date = moment($scope.unpaidInvoices[i].invoice_date).format("MM/DD/YYYY");
               $scope.unpaidInvoices[i].amount = Math.abs($scope.unpaidInvoices[i].pt_balance || $scope.unpaidInvoices[i].ins_balance)
             }
-
             $ionicLoading.hide();
           },
           function(err) {

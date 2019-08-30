@@ -2,140 +2,250 @@
 
   <ion-content>
     <form ng-submit="createPayment()">
-      <div class="list">
-        <ion-item>
-
-          <label class="item item-select item-input">
+      <ion-item>
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Client *
           </span>
-            <select ng-change="patientChanged(payment.payment.patient_id)" ng-model="payment.payment.patient_id" ng-options="patient.id as patient.name for patient in newPaymentSetting.patients">
-              <option value="">Please select</option>
-            </select>
-          </label>
+          <select ng-change="patientChanged(payment.payment.patient_id)" ng-model="payment.payment.patient_id"
+                  ng-options="patient.id as patient.name for patient in newPaymentSetting.patients">
+            <option value="">Please select</option>
+          </select>
+        </label>
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-calendar"></i>
             Date *
           </span>
-            <input type="date" ng-model="payment.payment.payment_date">
-          </label>
+          <input type="date" ng-model="payment.payment.payment_date">
+        </label>
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-calendar"></i>
             Credit *
           </span>
-            <span>{{selectedPatient.credits}}</span>
-            <input type="hidden" id="credit" value="{{selectedPatient.credits}}"/>
-          </label>
+          <span>{{selectedPatient.credits}}</span>
+          <input type="hidden" id="credit" value="{{selectedPatient.credits}}"/>
+        </label>
 
-          <ion-checkbox id="use_credit" onclick="updateInvoiceAmount()">
-            Use Credit
-          </ion-checkbox>
+        <ion-checkbox id="use_credit" onclick="updateInvoiceAmount()">
+          Use Credit
+        </ion-checkbox>
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Type *
           </span>
-            <select ng-model="payment.payment.payment_type_id" ng-options="type.id as type.name for type in newPaymentSetting.payment_types">
-              <option value="">Please select</option>
-            </select>
-          </label>
+          <select id="payment_type" onchange="updatePaymentType();" ng-model="payment.payment.payment_type_id"
+                  ng-options="type.id as type.name for type in newPaymentSetting.payment_types">
+            <option value="">Please select</option>
+          </select>
+        </label>
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Class *
           </span>
-            <select ng-model="payment.payment.payment_class_id" ng-options="class.id as class.name for class in newPaymentSetting.payment_classes">
-              <option value="">Please select</option>
-            </select>
-          </label>
+          <select ng-model="payment.payment.payment_class_id"
+                  ng-options="class.id as class.name for class in newPaymentSetting.payment_classes">
+            <option value="">Please select</option>
+          </select>
+        </label>
 
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Currency *
           </span>
-            <select ng-model="payment.payment.currency" ng-options="currency.shotcode as currency.name for currency in newPaymentSetting.currency">
+          <select ng-model="payment.payment.currency"
+                  ng-options="currency.shotcode as currency.name for currency in newPaymentSetting.currency">
 
-            </select>
-          </label>
+          </select>
+        </label>
 
-          <label class="item item-input">
+        <label class="item item-input">
             <span class="input-label">
               <i class="icon ion-person"></i>
               Amount *
             </span>
-            <input type="number" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()" >
-          </label>
+          <input type="number" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()">
+        </label>
 
-          <label class="item item-select item-input">
+        <label class="item item-select item-input">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Credit Card
           </span>
-            <select ng-model="payment.payment.preferred_credit_card" ng-options="card.shotcode as card.name for card in newPaymentSetting.preferred_credit_cards">
+          <select ng-model="payment.payment.preferred_credit_card"
+                  ng-options="card.shotcode as card.name for card in newPaymentSetting.preferred_credit_cards">
 
-            </select>
-          </label>
+          </select>
+        </label>
 
-          <label class="item item-input">
+        <label class="item item-input" id="payment_number">
             <span class="input-label">
               <i class="icon ion-person"></i>
               Check/Payment #
             </span>
-            <input type="text" ng-model="payment.payment.payment_number">
-          </label>
+          <input type="text" ng-model="payment.payment.payment_number">
+        </label>
 
-          <label class="item item-input">
+        <label class="item item-input">
             <span class="input-label">
               <i class="icon ion-person"></i>
               Memo
             </span>
-            <textarea ng-model="payment.payment.memo" style="height: 100px;"></textarea>
-          </label>
-
-
-        </ion-item>
-
-        <ion-item>
-          <label class="item item-input">
-            <table width="99%" style="margin: 0 auto;">
-              <thead>
-              <tr style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
-                <th class="patient_header" style="text-align: left"></th>
-                <th class="patient_header"  style="text-align: left">Amount</th>
-              </tr>
-              </thead>
-              <tr ng-repeat="invoice in unpaidInvoices" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0;">
-                <td>
-                  <strong>Date:</strong> {{invoice.invoice_date}} <br/>
-                  <strong>Balance:</strong> <span class="pat_bal">${{invoice.amount}}</span>  <br/>
-                  <strong>Invoice#:</strong> {{invoice.invoice_number}}
-                </td>
-                <td style="vertical-align:middle"><input type="number" style="text-align: right;font-size: 15pt" placeholder="Enter Amount" class="event_amount" onkeyup="invoiceWatcher()" ></td>
-              </tr>
-              <tr id="credit_row" style="display: none;">
-                <td><strong>Credit</strong></td>
-                <td style="vertical-align:middle;text-align: right;font-size: 15pt" id="remaining_credit"></td>
-              </tr>
-            </table>
-          </label>
-
-        </ion-item>
-
-
-
-        <label class="item">
-          <button class="button button-block button-positive" type="submit">Save</button>
+          <textarea ng-model="payment.payment.memo" style="height: 100px;"></textarea>
         </label>
-      </div>
+
+
+          <div id="card_fields" style="display: none">
+            <div class="table_cards">
+              <div class="row">
+                <div class="col col-50">Card(s)</div>
+                <div class="col col-25">Type</div>
+                <div class="col col-25">Select</div>
+              </div>
+              <div class="row" ng-repeat="patient_payment_method in patientPaymentMethods">
+                <div class="col col-50">{{patient_payment_method.name}}</div>
+                <div class="col col-25">{{patient_payment_method.card_type}}</div>
+                <div class="col col-25">
+                  <input type="radio" value={{patient_payment_method.id}} name="selected_patient_payment_method"
+                         class="patient_payment_method" onclick="updatePaymentMethod()"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col col-50">New Card</div>
+                <div class="col col-25"></div>
+                <div class="col col-25">
+                  <input id="new_patient_payment_method" value="new_card" type="radio"
+                         name="selected_patient_payment_method" class="patient_payment_method"
+                         onclick="updatePaymentMethod()"/>
+                </div>
+              </div>
+              <br>
+              <br>
+            </div>
+
+            <div id="new_credit_card">
+              <div id="new_card" style="border: 1px solid #DFDFDF;padding: 30px;"></div>
+              <label class="item item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+                Cardholder name
+              </span>
+                <input data-stripe="name" placeholder="Name As Appears On Card" class="string optional form-control "
+                       type="text" name="payment[patient_payment_method][cardholder_name]"
+                       id="payment_patient_payment_method_cardholder_name"/>
+              </label>
+
+              <label class="item item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+                Address 1
+              </span>
+                <input data-stripe="address-line1" placeholder="Address Line 1" class="string optional form-control"
+                       type="text" name="payment[patient_payment_method][address_line1]"
+                       id="payment_patient_payment_method_address_line1"/>
+              </label>
+
+              <label class="item item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+                Address 2
+              </span>
+                <input value="" data-stripe="address-line2" placeholder="Address Line 2"
+                       class="string optional form-control" type="text"
+                       name="payment[patient_payment_method][address_line2]"
+                       id="payment_patient_payment_method_address_line2"/>
+              </label>
+
+              <label class="item item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+                City
+              </span>
+                <input data-stripe="address-line1" placeholder="Address Line 1" class="string optional form-control"
+                       type="text" name="payment[patient_payment_method][address_line1]"
+                       id="payment_patient_payment_method_address_line1"/>
+              </label>
+
+              <label class="item item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+               State/province
+              </span>
+                <input data-stripe="address-line1" placeholder="Address Line 1" class="string optional form-control"
+                       type="text" name="payment[patient_payment_method][address_line1]"
+                       id="payment_patient_payment_method_address_line1"/>
+              </label>
+
+              <label class="item item-select item-input">
+              <span class="input-label">
+                <i class="icon ion-person"></i>
+               Card Type
+              </span>
+                <select ng-model="patient_new_payment_method.patient_new_payment_method.card_type"
+                        ng-options="card_type as card_type for card_type in cardTypes">
+                  <option value="">Please select</option>
+                </select>
+              </label>
+
+              <ion-checkbox ng-model="payment.payment.save_patient_payment_method">
+                <i class="icon ion-email"></i>
+                Save Card ?
+              </ion-checkbox>
+
+              <ion-checkbox id="is_default" ng-model="patient_new_payment_method.patient_new_payment_method.is_default">
+                <i class="icon ion-android-textsms"></i>
+                Is Default ?
+              </ion-checkbox>
+            </div>
+
+          </div>
+
+      </ion-item>
+
+      <ion-item>
+        <label class="item item-input">
+          <table width="99%" style="margin: 0 auto;">
+            <thead>
+            <tr style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
+              <th class="patient_header" style="text-align: left"></th>
+              <th class="patient_header" style="text-align: left">Amount</th>
+            </tr>
+            </thead>
+            <tr class="payment_invoice_events" ng-repeat="invoice in unpaidInvoices" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0;">
+              <td>
+                <strong>Date:</strong> {{invoice.invoice_date}} <br/>
+                <strong>Balance:</strong> <span class="pat_bal">${{invoice.amount}}</span> <br/>
+                <strong>Invoice#:</strong> {{invoice.invoice_number}}
+              </td>
+              <td style="vertical-align:middle">
+                <input type="number" style="text-align: right;font-size: 15pt" invoice_id={{invoice.id}}
+                                                       placeholder="Enter Amount" class="event_amount"
+                                                       onkeyup="invoiceWatcher()">
+              </td>
+            </tr>
+            <tr id="credit_row" style="display: none;">
+              <td><strong>Credit</strong></td>
+              <td style="vertical-align:middle;text-align: right;font-size: 15pt" id="remaining_credit"></td>
+            </tr>
+          </table>
+        </label>
+
+      </ion-item>
+
+
+      <label class="item">
+        <button class="button button-block button-positive submit_payment_button" type="submit">Save</button>
+      </label>
     </form>
   </ion-content>
 </ion-view>
