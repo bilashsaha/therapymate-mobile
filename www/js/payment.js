@@ -1,5 +1,4 @@
 angular.element(document).ready(function(){
-
   if($('#payment_patient_payment_method_id option').length > 2){
     first_card = $('#payment_patient_payment_method_id option')[2].value;
     $('#payment_patient_payment_method_id').val(first_card);
@@ -98,17 +97,19 @@ function updatePaymentType(){
 	} else {
 		$("#payment_number").hide();
 	}
-	if(value == "Credit Card"){
-		$('#card_fields').show();
-    updatePaymentMethod();
-    if($('#preferred_credit_card').length > 0){
-      $("#payment_number").show();
-    } else {
+  if(value == "Credit Card"){
+    if($("#show_stripe").val() == "true") {
+      $('#pref_credit_card').hide();
       $("#payment_number").hide();
+      $('#card_fields').show();
     }
-	} else {
-		$('#card_fields').hide();
-	}
+  else {
+      $('#pref_credit_card').show();
+      $("#payment_number").show();
+      $('#card_fields').hide();
+    }
+    updatePaymentMethod();
+  }
 }
 
 function updatePaymentMethod(){
@@ -145,13 +146,7 @@ function amountWatcher(){
 
   console.log(invoices_total);
 
-  // $('#total_payment_amount').text("$"+invoices_total);
   $('.event_amount').each(function(index){
-    // if(this.name == "payment[credit]"){
-    //   $(this).val(invoices_total);
-    //   $(this).parent().prev().text("$"+invoices_total);
-    // } else {
-
       current_amount = parseFloat($(this).parent().prev().find('.pat_bal').text().replace("$", ""));
       if(invoices_total <= current_amount){
       	if(invoices_total == 0) {
@@ -163,7 +158,6 @@ function amountWatcher(){
         $(this).val(current_amount);
       }
       invoices_total = (Math.round((parseFloat(invoices_total) - parseFloat(this.value)) * 100)/100) || 0;
-    // }
   });
   updateCreditRow(invoices_total);
 }
@@ -200,11 +194,6 @@ function invoiceWatcher(){
   $("[name='payment[credit]']").val(credit);
   $("[name='payment[credit]']").parent().prev().text("$"+credit);
   invoices_total = Math.round(invoices_total * 100) / 100;
-  // if(useCredit){
-  //   $('#total_payment_amount').text("$"+ (invoices_total + (parseFloat($('#credit').val() || 0))));
-  // } else {
-  //   $('#total_payment_amount').text("$"+invoices_total);
-  // }
   $('#payment_amount').val(invoices_total);
   updateCreditRow(0);
 }

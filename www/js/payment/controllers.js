@@ -53,7 +53,7 @@ angular.module('payment.controllers', [])
         $scope.createPayment = function () {
           var hasError = false
           $ionicLoading.show();
-          if ($('#payment_type option:selected').text() == "Credit Card") {
+          if ($('#payment_type option:selected').text() == "Credit Card" && $scope.newPaymentSetting.show_stripe) {
             if($('.patient_payment_method:checked').val() == 'new_card') {
               var $form = $('#new_payment');
               var extraDetails = {
@@ -78,40 +78,24 @@ angular.module('payment.controllers', [])
               $scope.payment.payment.patient_payment_method_id = $('.patient_payment_method:checked').val()
             }
             if(hasError){
-              return false;
+              alert("An error occured processing your card!")
+              return false
             }
           }
 
-
           var payment_invoice_events = []
-
           $(".event_amount").each(function(){
             if (Number($(this).val()) > 0 ) {
               payment_invoice_events.push({invoice_id:$(this).attr('invoice_id'),amount:$(this).val()})
             }
           })
-
           $scope.payment.payment.payment_invoice_events = payment_invoice_events
-
-
 
           console.log($scope.payment.payment)
           console.log($scope.patient_new_payment_method)
 
-          return false;
 
-            $scope.payment.payment.mobilephone = angular.element(document.getElementById('mobile_phone')).val();
-            $scope.payment.payment.homephone = angular.element(document.getElementById('home_phone')).val();
-            $scope.payment.payment.date_of_birth = angular.element(document.getElementById('dob')).val();
-            if ($scope.payment.payment.date_of_birth == null || $scope.payment.payment.date_of_birth == "" || moment($scope.payment.payment.date_of_birth)._d == "Invalid Date"){
-                $ionicPopup.alert({
-                    title: 'Error',
-                    template: "<center><strong>DOB is invalid</strong></center>"
-                });
-                return false;
-            }
-
-            json = {"payment": $scope.payment.payment, "provider": $scope.provider.provider, "billing_setting": $scope.billing_setting}
+            json = {"payment": $scope.payment.payment, "patient_new_payment_method": $scope.patient_new_payment_method.patient_new_payment_method}
             $ionicLoading.show();
             $http({
                 method: 'POST',

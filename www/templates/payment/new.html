@@ -1,6 +1,7 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
   <ion-content>
+    <input type="hidden" id="show_stripe" value="{{newPaymentSetting.show_stripe}}" />
     <form ng-submit="createPayment()">
       <ion-item>
         <label class="item item-select item-input">
@@ -77,7 +78,7 @@
           <input type="number" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()">
         </label>
 
-        <label class="item item-select item-input">
+        <label class="item item-select item-input" id="pref_credit_card" style="display: none">
           <span class="input-label">
             <i class="icon ion-android-person"></i>
             Credit Card
