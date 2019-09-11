@@ -1,6 +1,11 @@
 <ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
 
   <ion-content>
+    <div class="error-messages" style="display:none">
+      <ul class="error-list">
+        <li ng-repeat="errorMessage in errorMessages">{{errorMessage}}</li>
+      </ul>
+    </div>
     <input type="hidden" id="show_stripe" value="{{newPaymentSetting.show_stripe}}" />
     <form ng-submit="createPayment()">
       <ion-item>
@@ -23,16 +28,16 @@
           <input type="date" ng-model="payment.payment.payment_date">
         </label>
 
-        <label class="item item-select item-input">
+        <label class="item item-select item-input" ng-if="showCredit">
           <span class="input-label">
             <i class="icon ion-calendar"></i>
             Credit *
           </span>
           <span>{{selectedPatient.credits}}</span>
-          <input type="hidden" id="credit" value="{{selectedPatient.credits}}"/>
+          <input type="hidden" id="credit" ng-model="payment.payment.credit" value="{{selectedPatient.credits}}"/>
         </label>
 
-        <ion-checkbox id="use_credit" onclick="updateInvoiceAmount()">
+        <ion-checkbox ng-model="payment.payment.use_credit" id="use_credit" onclick="updateInvoiceAmount()" ng-if="showCredit">
           Use Credit
         </ion-checkbox>
 

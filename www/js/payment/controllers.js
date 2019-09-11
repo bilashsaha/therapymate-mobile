@@ -29,6 +29,7 @@ angular.module('payment.controllers', [])
     .controller('NewPaymentCtrl', function ($scope, $http, $location, $state, $window, $httpParamSerializerJQLike,$ionicLoading,$ionicPopup) {
         $scope.payment = {"payment": {}};
         $scope.selectedPatient = { "credits": 0}
+        $scope.showCredit = false;
         $scope.unpaidInvoices = []
         $scope.payment.payment.clinician_id = $scope.access.clinician_id;
         $scope.payment.payment.currency = 'usd';
@@ -51,6 +52,11 @@ angular.module('payment.controllers', [])
         );
 
         $scope.createPayment = function () {
+
+          if ($scope.checkPaymentErrors($scope.payment.payment)) {
+            return false;
+          }
+
           var hasError = false
           $ionicLoading.show();
           if ($('#payment_type option:selected').text() == "Credit Card" && $scope.newPaymentSetting.show_stripe) {
@@ -90,10 +96,9 @@ angular.module('payment.controllers', [])
             }
           })
           $scope.payment.payment.payment_invoice_events = payment_invoice_events
-
-          console.log($scope.payment.payment)
-          console.log($scope.patient_new_payment_method)
-
+          if($scope.payment.payment.use_credit){
+            $scope.payment.payment.credit = $scope.selectedPatient.credits;
+          }
 
             json = {"payment": $scope.payment.payment, "patient_new_payment_method": $scope.patient_new_payment_method.patient_new_payment_method}
             $ionicLoading.show();
@@ -135,6 +140,7 @@ angular.module('payment.controllers', [])
               $scope.unpaidInvoices[i].invoice_date = moment($scope.unpaidInvoices[i].invoice_date).format("MM/DD/YYYY");
               $scope.unpaidInvoices[i].amount = Math.abs($scope.unpaidInvoices[i].pt_balance || $scope.unpaidInvoices[i].ins_balance)
             }
+            $scope.showCredit = $scope.selectedPatient.credits > 0
             $ionicLoading.hide();
           },
           function(err) {
@@ -150,6 +156,32 @@ angular.module('payment.controllers', [])
 
       $scope.invoiceAmountChanged = function(changedAmount) {
         invoiceWatcher(false);
+      };
+
+      $scope.checkPaymentErrors = function(payment) {
+        $scope.errorMessages = []
+        if(payment.patient_id == null) {
+          $scope.errorMessages.push("Must Select a Client")
+        }
+        if(payment.payment_date == null) {
+          $scope.errorMessages.push("Date can not be blank")
+        }
+        if(payment.payment_type_id == null) {
+          $scope.errorMessages.push("Must Select a Type")
+        }
+        if(payment.payment_class_id == null) {
+          $scope.errorMessages.push("Must Select a Class")
+        }
+
+        if($scope.errorMessages.length > 0) {
+          $("div.error-messages").show();
+          $ionicScrollDelegate.scrollTop();
+          return true
+        }
+        else {
+          return false
+        }
+
       };
 
 

@@ -144,8 +144,6 @@ function amountWatcher(){
     var invoices_total = $('#payment_amount').val();
   }
 
-  console.log(invoices_total);
-
   $('.event_amount').each(function(index){
       current_amount = parseFloat($(this).parent().prev().find('.pat_bal').text().replace("$", ""));
       if(invoices_total <= current_amount){
@@ -222,6 +220,7 @@ function toggleUnallocatedCredit(show){
 
 function updateInvoiceAmount(){
   useCredit = $('#use_credit').is(':checked');
+  $("#payment_type").find("option[label='Credit']").attr("selected","selected")
   toggleUnallocatedCredit(useCredit);
   amountWatcher(useCredit);
   $('#payment_amount').unbind().on('keyup', function(){
