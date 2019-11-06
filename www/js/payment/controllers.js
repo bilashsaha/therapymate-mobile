@@ -39,10 +39,30 @@ angular.module('payment.controllers', [])
         $scope.patient_new_payment_method = {"patient_new_payment_method":{}}
 
 
+        $scope.stripe = Stripe($scope.access.stripe_publishable_api_key);
+        var style = {
+          base: {
+            color: '#32325d',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '18px',
+            '::placeholder': {
+              color: '#aab7c4'
+            }
+          },
+          invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a'
+          }
+        };
+        var elements = $scope.stripe.elements();
+        $scope.card = elements.create('card', {style: style});
+
+
         $ionicLoading.show();
         $http.get(apiHost + "api/app/payments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newPaymentSetting = response.data;
-                $card.mount('#new_card');
+                $scope.card.mount('#new_card');
                 $ionicLoading.hide()
             },
             function (err) {
@@ -59,35 +79,7 @@ angular.module('payment.controllers', [])
 
           var hasError = false
           $ionicLoading.show();
-          if ($('#payment_type option:selected').text() == "Credit Card" && $scope.newPaymentSetting.show_stripe) {
-            if($('.patient_payment_method:checked').val() == 'new_card') {
-              var $form = $('#new_payment');
-              var extraDetails = {
-                name: $form.find('#payment_patient_payment_method_cardholder_name').val(),
-                address_line1: $form.find('#payment_patient_payment_method_address_line1').val(),
-                address_line2: $form.find('#payment_patient_payment_method_address_line2').val(),
-                address_city: $form.find('#payment_patient_payment_method_address_city').val(),
-                address_state: $form.find('#payment_patient_payment_method_address_state').val(),
-                address_zip: $form.find('#payment_patient_payment_method_address_zip').val(),
-              };
 
-              stripe.createToken($card, extraDetails).then(function(result) {
-                if (result.error) {
-                  hasError = true
-                  alert(result.error.message)
-                } else {
-                  var token = result.token;
-                  $scope.payment.payment.stripe_card_token = token.id
-                }
-              });
-            } else {
-              $scope.payment.payment.patient_payment_method_id = $('.patient_payment_method:checked').val()
-            }
-            if(hasError){
-              alert("An error occured processing your card!")
-              return false
-            }
-          }
 
           var payment_invoice_events = []
           $(".event_amount").each(function(){
@@ -100,27 +92,65 @@ angular.module('payment.controllers', [])
             $scope.payment.payment.credit = $scope.selectedPatient.credits;
           }
 
-            json = {"payment": $scope.payment.payment, "patient_new_payment_method": $scope.patient_new_payment_method.patient_new_payment_method}
-            $ionicLoading.show();
-            $http({
-                method: 'POST',
-                url: apiHost + 'api/app/payments.json?'+$scope.query_access,
-                data: $httpParamSerializerJQLike(json),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(
-                function (res) {
-                    if (res.data) {
-                        $ionicLoading.hide();
-                        $window.location.href = "#/app/payments";
-                        $window.location.reload();
-                    }
-                }
-            ).catch(function(res){
-                    $ionicLoading.hide();
-                    $scope.errorMessageDialog(res)
-                })
+          if ($('#payment_type option:selected').text() == "Credit Card" && $scope.newPaymentSetting.show_stripe) {
+            if($('.patient_payment_method:checked').val() == 'new_card') {
+              var $form = $('#new_payment');
+              var extraDetails = {
+                name: $form.find('#payment_patient_payment_method_cardholder_name').val(),
+                address_line1: $form.find('#payment_patient_payment_method_address_line1').val(),
+                address_line2: $form.find('#payment_patient_payment_method_address_line2').val(),
+                address_city: $form.find('#payment_patient_payment_method_address_city').val(),
+                address_state: $form.find('#payment_patient_payment_method_address_state').val(),
+                address_zip: $form.find('#payment_patient_payment_method_address_zip').val(),
+              };
 
+              $scope.stripe.createToken($scope.card, extraDetails).then(function(result) {
+                if (result.error) {
+                  hasError = true
+                  alert(result.error.message)
+                } else {
+                  var token = result.token;
+                  $scope.payment.payment.stripe_card_token = token.id
+                  $scope.processPayment();
+                }
+              });
+            } else {
+              $scope.payment.payment.patient_payment_method_id = $('.patient_payment_method:checked').val()
+              $scope.processPayment();
+            }
+            if(hasError){
+              alert("An error occured processing your card!")
+              return false
+            }
+          } else {
+            $scope.processPayment();
+          }
         };
+
+
+      $scope.processPayment = function() {
+        json = {"payment": $scope.payment.payment, "patient_new_payment_method": $scope.patient_new_payment_method.patient_new_payment_method}
+        $ionicLoading.show();
+        $http({
+          method: 'POST',
+          url: apiHost + 'api/app/payments.json?'+$scope.query_access,
+          data: $httpParamSerializerJQLike(json),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).then(
+          function (res) {
+            if (res.data) {
+              $ionicLoading.hide();
+              $window.location.href = "#/app/payments";
+              $window.location.reload();
+            }
+          }
+        ).catch(function(res){
+          $ionicLoading.hide();
+          $scope.errorMessageDialog(res)
+        })
+      }
+
+
 
 
         $scope.selectedBillingType = function(){

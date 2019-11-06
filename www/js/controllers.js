@@ -64,7 +64,7 @@ angular.module('starter.controllers', [])
         $scope.showVersion = function(){
             $ionicPopup.alert({
                 title: 'Therapymate',
-                template: "<center><strong>Version: 2.0.8</strong></center>"
+                template: "<center><strong>Version: 2.0.9</strong></center>"
             });
 
         }

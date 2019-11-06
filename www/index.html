@@ -51,26 +51,6 @@
     <script type="text/javascript" src="js/fullcalendar.min.js"></script>
     <script src="js/payment.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-    <script>
-      var stripe = Stripe('pk_test_YB6vPc0TLU3C3tanI8ksDvTO00tD59OMoC');
-      var style = {
-        base: {
-          color: '#32325d',
-          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-          fontSmoothing: 'antialiased',
-          fontSize: '18px',
-          '::placeholder': {
-            color: '#aab7c4'
-          }
-        },
-        invalid: {
-          color: '#fa755a',
-          iconColor: '#fa755a'
-        }
-      };
-      var elements = stripe.elements();
-      var $card = elements.create('card', {style: style});
-    </script>
 
   </head>
 

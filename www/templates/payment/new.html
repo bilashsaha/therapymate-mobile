@@ -80,7 +80,7 @@
               <i class="icon ion-person"></i>
               Amount *
             </span>
-          <input type="number" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()">
+          <input type="number" step="0.01" ng-model="payment.payment.amount" id="payment_amount" onkeyup="amountWatcher()">
         </label>
 
         <label class="item item-select item-input" id="pref_credit_card" style="display: none">
@@ -234,7 +234,7 @@
                 <strong>Invoice#:</strong> {{invoice.invoice_number}}
               </td>
               <td style="vertical-align:middle">
-                <input type="number" style="text-align: right;font-size: 15pt" invoice_id={{invoice.id}}
+                <input type="number" step="0.01" style="text-align: right;font-size: 15pt" invoice_id={{invoice.id}}
                                                        placeholder="Enter Amount" class="event_amount"
                                                        onkeyup="invoiceWatcher()">
               </td>
