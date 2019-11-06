@@ -214,7 +214,10 @@ angular.module('payment.controllers', [])
 
       };
 
-
+      $scope.goToPayments = function () {
+        $window.location.href = "#/app/payments";
+        $window.location.reload();
+      }
 
     })
 
