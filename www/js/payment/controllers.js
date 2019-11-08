@@ -45,7 +45,7 @@ angular.module('payment.controllers', [])
             color: '#32325d',
             fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
             fontSmoothing: 'antialiased',
-            fontSize: '18px',
+            fontSize: '15px',
             '::placeholder': {
               color: '#aab7c4'
             }
