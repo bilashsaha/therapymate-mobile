@@ -213,7 +213,6 @@ alert("Error");
         $ionicConfigProvider.backButton.previousTitleText(false);
     });
 
-//var apiHost = 'https://www.therapymate.com/';
-//var apiHost = 'https://therapymate-staging.herokuapp.com/';
-//var apiHost = 'https://therapymate.net/';
-var apiHost = 'http://192.168.0.105:3000/';
+var apiHost = 'https://www.therapymate.com/';
+//var apiHost = 'https://therapymate.org/';
+//var apiHost = 'http://192.168.0.105:3000/';

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.therapymate664305" version="2.0.9" versionCode="20009" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.ionicframework.therapymate664305" version="2.0.10" versionCode="200010" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>Therapymate</name>
   <description>
     Practice Management System for Mental Health Professionals,Social Workers,Therapists,Counselors,Psychiatrists,Psychologist
