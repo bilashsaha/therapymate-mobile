@@ -127,6 +127,7 @@ angular.module('appointment.controllers', [])
         $scope.appointment.appointment.clinician_id = $scope.access.clinician_id;
         $scope.appointment.appointment.units = 1;
         $scope.appointment.appointment.start_time = new Date("1970-01-01 "+(new Date().getHours()+1)+":00:00");
+        $scope.appointment.appointment.procedure_code_modifier_id = null;
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -139,6 +140,10 @@ angular.module('appointment.controllers', [])
         $ionicLoading.show();
         $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newAppointmentSetting = response.data;
+                if ($scope.newAppointmentSetting.locations.length == 2) {
+                  active_location = $scope.newAppointmentSetting.locations.filter((location)=> { return location.name != "No Location"})
+                  $scope.appointment.appointment.location_id = active_location[0].id
+                }
                 $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
                 $ionicLoading.hide();
             },
@@ -281,6 +286,9 @@ angular.module('appointment.controllers', [])
          if(appointment.patient_id == null && !calenderEvent) {
            $scope.errorMessages.push("Must Select a Client")
          }
+         if($scope.display_procedure_code_modifiers && appointment.procedure_code_modifier_id == null) {
+           $scope.errorMessages.push("Must Select a Code Modifier")
+          }
          if(appointment.service_code_id == null) {
            $scope.errorMessages.push("Must Select a Type")
          }
@@ -332,7 +340,10 @@ angular.module('appointment.controllers', [])
                 if($scope.newAppointmentSetting.clinicians[i].id == clinician_id){
                     $scope.display_procedure_code_modifiers =   $scope.newAppointmentSetting.clinicians[i].display_procedure_code_modifiers
                     $scope.procedure_code_modifiers = $scope.newAppointmentSetting.clinicians[i].procedure_code_modifiers
-                    break;
+                    if ($scope.display_procedure_code_modifiers) {
+                      $scope.appointment.appointment.procedure_code_modifier_id = $scope.newAppointmentSetting.clinicians[i].default_procedure_code_modifier_id
+                    }
+                  break;
                 }
             }
         }
@@ -376,327 +387,349 @@ angular.module('appointment.controllers', [])
         }
 })
 
-    .controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading, $ionicModal,$ionicScrollDelegate) {
+.controller('EditAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading, $ionicModal,$ionicScrollDelegate) {
 
-        $ionicModal.fromTemplateUrl('modal.html', {
-            scope: $scope,
-            animation: 'slide-in-up'
-        }).then(function(modal) {
-            $scope.modal = modal;
-        });
+    $ionicModal.fromTemplateUrl('modal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
 
-        $scope.units_options = [1,2,3,4,5,6,7,8,9,10,11,12];
+    $scope.units_options = [1,2,3,4,5,6,7,8,9,10,11,12];
 
-        $scope.choice = {"val":"A"};
+    $scope.choice = {"val":"A"};
 
-        $ionicLoading.show();
-        $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access).then(function (response) {
-                $scope.newAppointmentSetting = response.data;
-                response.data.appointment.start_at = moment(response.data.appointment.start_at).local().toDate();
-                console.log(response.data.appointment.start_at)
-                response.data.appointment.start_time = new Date(response.data.appointment.start_time);
-                response.data.appointment.end_time = new Date(response.data.appointment.end_time);
-                response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
-                $scope.appointment = {"appointment": response.data.appointment};
-                $scope.isCalenderEvent = $scope.appointment.appointment.patient_id == null;
-                $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
-                $scope.getPayer();
+    $scope.procedure_code_modifiers = [];
 
-                $ionicLoading.hide();
-            },
-            function(err) {
-                $ionicLoading.hide();
-                $scope.errorMessageDialog(err)
-            }
-        );
-        $scope.errorMessages = []
-        $scope.startTimeOfDay = null
-        $scope.endTimeOfDay = null
 
-        $scope.timeOfTheDay = function(date,time){
-          time = moment(time).format('ha');
-          time = moment((date.format("YYYY-MM-DD") + ' ' + time),"YYYY-MM-DD ha");
-          return time;
-        };
+    $ionicLoading.show();
+    $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access).then(function (response) {
+            $scope.newAppointmentSetting = response.data;
+            response.data.appointment.start_at = moment(response.data.appointment.start_at).local().toDate();
+            console.log(response.data.appointment.start_at)
+            response.data.appointment.start_time = new Date(response.data.appointment.start_time);
+            response.data.appointment.end_time = new Date(response.data.appointment.end_time);
+            response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
+            $scope.appointment = {"appointment": response.data.appointment};
+            $scope.isCalenderEvent = $scope.appointment.appointment.patient_id == null;
+            $scope.getDisplayProcedureCodeModifiers($scope.appointment.appointment.clinician_id)
+            $scope.getPayer();
 
-        $scope.calculateStartAndEndOfDay = function(startTimeOfDay, endTimeOfDay, date){
-          date = moment(date)
-          startTimeOfDay = $scope.timeOfTheDay(date, startTimeOfDay)
-          $scope.startTimeOfDay = startTimeOfDay.subtract(1, 'second');
-          $scope.endTimeOfDay = $scope.timeOfTheDay(date, endTimeOfDay)
-        };
-
-      $scope.getOverlappedAppointment = function(appointment){
-        var scheduled_until = "";
-        if(appointment.frequency != "One Time"){
-          scheduled_until = appointment.scheduled_until;
-          scheduled_until = moment(scheduled_until).utc().format();
-        }
-
-        var start_at = moment(appointment.start_at).utc().format();
-        var end_at = moment(appointment.end_at).utc().format();
-        $ionicLoading.show();
-        var existingAppointments = $.ajax({
-          type: "GET",
-          url: apiHost+"/api/app/appointments/overlapped?"+$scope.query_access+"&id="+appointment.id+"&clinician_id="+appointment.clinician_id+"&start_at="+start_at+"&end_at="+end_at+"&scheduled_until="+scheduled_until+"&frequency="+appointment.frequency,
-          async: false
-        }).responseText;
-
-        $ionicLoading.hide()
-
-        return JSON.parse(existingAppointments)['appointments'][0];
-      },
-
-        $scope.handleOverlappedAppointment = function(appointment){
-          if(appointment.patient_id == null && appointment.therapy_group_id == null) {
-            return true
-          }
-          console.log("2st time ")
-          var existingAppointment = $scope.getOverlappedAppointment(appointment);
-
-          if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
-            alert("You already have an appointment for this date and time at a different location.");
-            return false;
-          }
-          if(existingAppointment && (existingAppointment.location_id == appointment.location_id || !appointment.location_id)){
-            return confirm("You already have an appointment for this date and time at this location. Still want to proceed?");
-          }
-          return true;
+            $ionicLoading.hide();
         },
-
-
-        $scope.updateAppointment = function(){
-
-          var calenderEvent = $scope.isCalenderEvent
-          var appointment = jQuery.extend(true, {}, $scope.appointment.appointment)
-
-          if ($scope.checkAppointmentErrors(appointment,calenderEvent)) {
-            return false;
-          }
-
-          console.log($scope.appointment.appointment)
-
-          var start_time = appointment.start_time.toTimeString().split(" ")[0];
-          var end_time = appointment.end_time.toTimeString().split(" ")[0];
-          var start_at = appointment.start_at.toDateString();
-          appointment.start_at = start_at + " " + start_time
-          appointment.end_at = start_at + " " + end_time
-
-          $scope.appointment.appointment.start_at = start_at + " " + start_time
-          $scope.appointment.appointment.end_at = start_at + " " + end_time
-
-
-          var dayName = moment(appointment.start_at).format('dddd').toLowerCase();
-          var startOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["start_"+dayName]);
-          var endOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["end_"+dayName]);
-          $scope.calculateStartAndEndOfDay(startOfDay,endOfDay, appointment.start_at);
-          var slotNotAvailable = !moment(appointment.start_at).isBetween($scope.startTimeOfDay,$scope.endTimeOfDay);
-          var dayNotAvailable = $scope.newAppointmentSetting.work_hour.all_clinicians_turn_off_days["clinician_"+appointment.clinician_id].indexOf(moment(appointment.start_at).day()) > -1
-
-
-          if(dayNotAvailable && !calenderEvent ){
-            alert("This day is not available.")
-            return false;
-          }
-          else if(slotNotAvailable && !calenderEvent ) {
-            alert("This slot is not available.")
-            return false;
-          }
-
-          if(!$scope.handleOverlappedAppointment(appointment)){
-            return false;
-          }
-
-          $ionicLoading.show();
-
-            var access = JSON.parse(localStorage.getItem('access'));
-            $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
-            .then(
-                function(res) {
-                    if(res.data){
-                        $ionicLoading.hide();
-                        $window.location.href = "#/app/appointments";
-                        $window.location.reload();
-                    }
-                }
-            ).catch(function(res){
-                    $ionicLoading.hide();
-                    $scope.errorMessageDialog(res)
-                })
-
-        };
-
-        $scope.checkAppointmentErrors = function(appointment) {
-           $scope.errorMessages = []
-           if(appointment.clinician_id == null) {
-             $scope.errorMessages.push("Must Select a Clinician")
-           }
-           if(appointment.patient_id == null) {
-             $scope.errorMessages.push("Must Select a Client")
-           }
-           if(appointment.procedure_code_modifier_id == null) {
-             $scope.errorMessages.push("Must Select a Code Modifier")
-           }
-           if(appointment.service_code_id == null) {
-             $scope.errorMessages.push("Must Select a Type")
-           }
-           if(appointment.location_id == null) {
-             $scope.errorMessages.push("Must Select a Location")
-           }
-           if(appointment.start_at == null) {
-             $scope.errorMessages.push("Date can not be blank")
-           }
-           if(appointment.start_time == null) {
-             $scope.errorMessages.push("Time can not be blank")
-           }
-           if(appointment.end_time == null) {
-             $scope.errorMessages.push("Until can not be blank")
-           }
-           if(appointment.frequency == null) {
-             $scope.errorMessages.push("Must Select Frequency")
-           }
-
-           if($scope.errorMessages.length > 0) {
-             $("div.error-messages").show();
-             $ionicScrollDelegate.scrollTop();
-             return true
-           }
-           else {
-             return false
-           }
-
-          };
-
-        $scope.resetForm = function(){
-            $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
+        function(err) {
+            $ionicLoading.hide();
+            $scope.errorMessageDialog(err)
         }
-        $scope.startTimeChanged = function(startTime){
-            var duration = 0;
-            for (i=0;i< $scope.newAppointmentSetting.service_codes.length; i++){
-                if($scope.appointment.appointment.service_code_id == $scope.newAppointmentSetting.service_codes[i].id){
-                    duration = $scope.newAppointmentSetting.service_codes[i].duration;
-                    break;
-                }
-            }
-            var endTime = moment(startTime).add(duration,"minutes");
-            $scope.appointment.appointment.end_time = endTime._d;
-        };
-        $scope.hideModal = function(){
-            $scope.modal.hide();
-        }
-        $scope.showModal = function(){
-            $scope.modal.show();
-        }
+    );
+    $scope.errorMessages = []
+    $scope.startTimeOfDay = null
+    $scope.endTimeOfDay = null
 
-        $scope.delete = function(){
-            if($scope.appointment.appointment.frequency != 'One Time'){
-                $scope.modal.show();
-                $ionicLoading.show();
-                var url = "";
-                if($scope.choice.val == 'A'){
-                    url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
-                }
-                else{
-                    url = apiHost+"api/app/appointments/"+$stateParams.id+"/destroy_all.json?";
-                }
+    $scope.timeOfTheDay = function(date,time){
+      time = moment(time).format('ha');
+      time = moment((date.format("YYYY-MM-DD") + ' ' + time),"YYYY-MM-DD ha");
+      return time;
+    };
 
-            }
-            else{
-                url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
-                if(!confirm("Are you sure?")){
-                    return;
-                }
-                $ionicLoading.show();
-            }
+    $scope.calculateStartAndEndOfDay = function(startTimeOfDay, endTimeOfDay, date){
+      date = moment(date)
+      startTimeOfDay = $scope.timeOfTheDay(date, startTimeOfDay)
+      $scope.startTimeOfDay = startTimeOfDay.subtract(1, 'second');
+      $scope.endTimeOfDay = $scope.timeOfTheDay(date, endTimeOfDay)
+    };
+
+  $scope.getOverlappedAppointment = function(appointment){
+    var scheduled_until = "";
+    if(appointment.frequency != "One Time"){
+      scheduled_until = appointment.scheduled_until;
+      scheduled_until = moment(scheduled_until).utc().format();
+    }
+
+    var start_at = moment(appointment.start_at).utc().format();
+    var end_at = moment(appointment.end_at).utc().format();
+    $ionicLoading.show();
+    var existingAppointments = $.ajax({
+      type: "GET",
+      url: apiHost+"/api/app/appointments/overlapped?"+$scope.query_access+"&id="+appointment.id+"&clinician_id="+appointment.clinician_id+"&start_at="+start_at+"&end_at="+end_at+"&scheduled_until="+scheduled_until+"&frequency="+appointment.frequency,
+      async: false
+    }).responseText;
+
+    $ionicLoading.hide()
+
+    return JSON.parse(existingAppointments)['appointments'][0];
+  },
+
+    $scope.handleOverlappedAppointment = function(appointment){
+      if(appointment.patient_id == null && appointment.therapy_group_id == null) {
+        return true
+      }
+      console.log("2st time ")
+      var existingAppointment = $scope.getOverlappedAppointment(appointment);
+
+      if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
+        alert("You already have an appointment for this date and time at a different location.");
+        return false;
+      }
+      if(existingAppointment && (existingAppointment.location_id == appointment.location_id || !appointment.location_id)){
+        return confirm("You already have an appointment for this date and time at this location. Still want to proceed?");
+      }
+      return true;
+    },
 
 
-            var access = JSON.parse(localStorage.getItem('access'));
-            $http.delete(url+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
-                .then(
-                function(res) {
+    $scope.updateAppointment = function(){
+
+      var calenderEvent = $scope.isCalenderEvent
+      var appointment = jQuery.extend(true, {}, $scope.appointment.appointment)
+
+      if ($scope.checkAppointmentErrors(appointment,calenderEvent)) {
+        return false;
+      }
+
+      console.log($scope.appointment.appointment)
+
+      var start_time = appointment.start_time.toTimeString().split(" ")[0];
+      var end_time = appointment.end_time.toTimeString().split(" ")[0];
+      var start_at = appointment.start_at.toDateString();
+      appointment.start_at = start_at + " " + start_time
+      appointment.end_at = start_at + " " + end_time
+
+      $scope.appointment.appointment.start_at = start_at + " " + start_time
+      $scope.appointment.appointment.end_at = start_at + " " + end_time
+
+
+      var dayName = moment(appointment.start_at).format('dddd').toLowerCase();
+      var startOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["start_"+dayName]);
+      var endOfDay = moment($scope.newAppointmentSetting.work_hour.all_clinicians_work_hours["clinician_"+appointment.clinician_id]["end_"+dayName]);
+      $scope.calculateStartAndEndOfDay(startOfDay,endOfDay, appointment.start_at);
+      var slotNotAvailable = !moment(appointment.start_at).isBetween($scope.startTimeOfDay,$scope.endTimeOfDay);
+      var dayNotAvailable = $scope.newAppointmentSetting.work_hour.all_clinicians_turn_off_days["clinician_"+appointment.clinician_id].indexOf(moment(appointment.start_at).day()) > -1
+
+
+      if(dayNotAvailable && !calenderEvent ){
+        alert("This day is not available.")
+        return false;
+      }
+      else if(slotNotAvailable && !calenderEvent ) {
+        alert("This slot is not available.")
+        return false;
+      }
+
+      if(!$scope.handleOverlappedAppointment(appointment)){
+        return false;
+      }
+
+      $ionicLoading.show();
+
+        var access = JSON.parse(localStorage.getItem('access'));
+        $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+        .then(
+            function(res) {
+                if(res.data){
                     $ionicLoading.hide();
                     $window.location.href = "#/app/appointments";
                     $window.location.reload();
                 }
-            ).catch(function(res){
-                    $ionicLoading.hide();
-                    $scope.errorMessageDialog(res)
-                })
-        }
-
-
-        $scope.getDisplayProcedureCodeModifiers = function(clinician_id){
-            for(var i in $scope.newAppointmentSetting.clinicians)
-            {
-                if($scope.newAppointmentSetting.clinicians[i].id == clinician_id){
-                    $scope.display_procedure_code_modifiers =   $scope.newAppointmentSetting.clinicians[i].display_procedure_code_modifiers
-                    $scope.procedure_code_modifiers = $scope.newAppointmentSetting.clinicians[i].procedure_code_modifiers
-                    break;
-                }
-            }
-        }
-
-        $scope.getPayer = function(){
-            if($scope.appointment.appointment.patient_id != null) {
-            $ionicLoading.show();
-            $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
-                    var patient_providers = response.data.patient_providers;
-                    if(patient_providers.length > 0){
-                        $scope.payer = patient_providers[0].name;
-                    }
-                    else{
-                        $scope.payer = "Private Pay"
-                    }
-
-                    console.log($scope.payer)
-                    $ionicLoading.hide();
-                },
-                function(err) {
-                    $ionicLoading.hide();
-                    $scope.errorMessageDialog(err);
-                }
-            );
-            }
-        }
-
-    })
-
-    .controller('MissedAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
-        $scope.missed_appointment_note = {"missed_appointment_note": {}};
-        $scope.sign_this_form = {};
-        $ionicLoading.show();
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.get(apiHost+"api/app/missed_appointment_notes/new.json?appointment_id="+$stateParams.id+"&"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
-            .then(
-            function(res) {
-                $scope.missedAppointmentSetting = res.data;
-                $scope.missed_appointment_note.missed_appointment_note.cancellation_fee = res.data.cancellation_fee
-                $ionicLoading.hide();
             }
         ).catch(function(res){
                 $ionicLoading.hide();
                 $scope.errorMessageDialog(res)
-            });
+            })
 
-        $scope.createMissedAppointment = function(){
-            $ionicLoading.show();
-            json = {"missed_appointment_note": $scope.missed_appointment_note.missed_appointment_note, "sign_this_form": $scope.sign_this_form.sign_this_form}
-            $http({
-                method: 'POST',
-                url: apiHost + 'api/app/missed_appointment_notes.json?appointment_id='+$stateParams.id+"&"+$scope.query_access,
-                data: $httpParamSerializerJQLike(json),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-            }).then(
-                function (res) {
-                    if (res.data) {
-                        $ionicLoading.hide();
-                        $window.location.href = "#/app/appointments";
-                        $window.location.reload();
-                    }
-                }
-            ).catch(function(res){
-                    $ionicLoading.hide();
-                    $scope.errorMessageDialog(res)
-                })
+    };
+
+    $scope.checkAppointmentErrors = function(appointment) {
+       $scope.errorMessages = []
+       if(appointment.clinician_id == null) {
+         $scope.errorMessages.push("Must Select a Clinician")
+       }
+       if(appointment.patient_id == null) {
+         $scope.errorMessages.push("Must Select a Client")
+       }
+      if($scope.display_procedure_code_modifiers && appointment.procedure_code_modifier_id == null) {
+        $scope.errorMessages.push("Must Select a Code Modifier")
+      }
+       if(appointment.service_code_id == null) {
+         $scope.errorMessages.push("Must Select a Type")
+       }
+       if(appointment.location_id == null) {
+         $scope.errorMessages.push("Must Select a Location")
+       }
+       if(appointment.start_at == null) {
+         $scope.errorMessages.push("Date can not be blank")
+       }
+       if(appointment.start_time == null) {
+         $scope.errorMessages.push("Time can not be blank")
+       }
+       if(appointment.end_time == null) {
+         $scope.errorMessages.push("Until can not be blank")
+       }
+       if(appointment.frequency == null) {
+         $scope.errorMessages.push("Must Select Frequency")
+       }
+
+       if($scope.errorMessages.length > 0) {
+         $("div.error-messages").show();
+         $ionicScrollDelegate.scrollTop();
+         return true
+       }
+       else {
+         return false
+       }
+
+      };
+
+    $scope.resetForm = function(){
+        $scope.isCalenderEvent = event.target.options[event.target.selectedIndex].text == 'Calendar Event';
+    }
+    $scope.startTimeChanged = function(startTime){
+        var duration = 0;
+        for (i=0;i< $scope.newAppointmentSetting.service_codes.length; i++){
+            if($scope.appointment.appointment.service_code_id == $scope.newAppointmentSetting.service_codes[i].id){
+                duration = $scope.newAppointmentSetting.service_codes[i].duration;
+                break;
+            }
         }
-    })
+        var endTime = moment(startTime).add(duration,"minutes");
+        $scope.appointment.appointment.end_time = endTime._d;
+    };
+    $scope.hideModal = function(){
+        $scope.modal.hide();
+    }
+    $scope.showModal = function(){
+        $scope.modal.show();
+    }
+
+    $scope.delete = function(){
+        if($scope.appointment.appointment.frequency != 'One Time'){
+            $scope.modal.show();
+            $ionicLoading.show();
+            var url = "";
+            if($scope.choice.val == 'A'){
+                url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
+            }
+            else{
+                url = apiHost+"api/app/appointments/"+$stateParams.id+"/destroy_all.json?";
+            }
+
+        }
+        else{
+            url = apiHost+"api/app/appointments/"+$stateParams.id+".json?";
+            if(!confirm("Are you sure?")){
+                return;
+            }
+            $ionicLoading.show();
+        }
+
+
+        var access = JSON.parse(localStorage.getItem('access'));
+        $http.delete(url+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+            .then(
+            function(res) {
+                $ionicLoading.hide();
+                $window.location.href = "#/app/appointments";
+                $window.location.reload();
+            }
+        ).catch(function(res){
+                $ionicLoading.hide();
+                $scope.errorMessageDialog(res)
+            })
+    }
+
+  $scope.clinicianChanged = function(selectedClinicianId){
+    $ionicLoading.show();
+    $http.get(apiHost+"api/app/appointments/new.json?"+$scope.query_access+"&clinician_id="+selectedClinicianId).then(function (response) {
+        $scope.newAppointmentSetting = response.data;
+        $scope.display_procedure_code_modifiers = false;
+        $scope.appointment.appointment.procedure_code_modifier_id = null
+        $scope.getDisplayProcedureCodeModifiers(selectedClinicianId)
+        $ionicLoading.hide();
+      },
+      function(err) {
+        $ionicLoading.hide();
+        $scope.errorMessageDialog(err);
+      }
+    );
+  };
+
+
+    $scope.getDisplayProcedureCodeModifiers = function(clinician_id){
+        for(var i in $scope.newAppointmentSetting.clinicians)
+        {
+            if($scope.newAppointmentSetting.clinicians[i].id == clinician_id){
+                $scope.display_procedure_code_modifiers =   $scope.newAppointmentSetting.clinicians[i].display_procedure_code_modifiers
+                $scope.procedure_code_modifiers = $scope.newAppointmentSetting.clinicians[i].procedure_code_modifiers
+                if ($scope.display_procedure_code_modifiers && $scope.appointment.appointment.procedure_code_modifier_id == null) {
+                  $scope.appointment.appointment.procedure_code_modifier_id = $scope.newAppointmentSetting.clinicians[i].default_procedure_code_modifier_id
+                }
+              break;
+            }
+        }
+    }
+
+    $scope.getPayer = function(){
+        if($scope.appointment.appointment.patient_id != null) {
+        $ionicLoading.show();
+        $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
+                var patient_providers = response.data.patient_providers;
+                if(patient_providers.length > 0){
+                    $scope.payer = patient_providers[0].name;
+                }
+                else{
+                    $scope.payer = "Private Pay"
+                }
+
+                console.log($scope.payer)
+                $ionicLoading.hide();
+            },
+            function(err) {
+                $ionicLoading.hide();
+                $scope.errorMessageDialog(err);
+            }
+        );
+        }
+    }
+
+})
+
+.controller('MissedAppointmentCtrl', function($scope,$http,$location,$state,$window, $httpParamSerializerJQLike, $stateParams, $ionicLoading) {
+    $scope.missed_appointment_note = {"missed_appointment_note": {}};
+    $scope.sign_this_form = {};
+    $ionicLoading.show();
+    var access = JSON.parse(localStorage.getItem('access'));
+    $http.get(apiHost+"api/app/missed_appointment_notes/new.json?appointment_id="+$stateParams.id+"&"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+        .then(
+        function(res) {
+            $scope.missedAppointmentSetting = res.data;
+            $scope.missed_appointment_note.missed_appointment_note.cancellation_fee = res.data.cancellation_fee
+            $ionicLoading.hide();
+        }
+    ).catch(function(res){
+            $ionicLoading.hide();
+            $scope.errorMessageDialog(res)
+        });
+
+    $scope.createMissedAppointment = function(){
+        $ionicLoading.show();
+        json = {"missed_appointment_note": $scope.missed_appointment_note.missed_appointment_note, "sign_this_form": $scope.sign_this_form.sign_this_form}
+        $http({
+            method: 'POST',
+            url: apiHost + 'api/app/missed_appointment_notes.json?appointment_id='+$stateParams.id+"&"+$scope.query_access,
+            data: $httpParamSerializerJQLike(json),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        }).then(
+            function (res) {
+                if (res.data) {
+                    $ionicLoading.hide();
+                    $window.location.href = "#/app/appointments";
+                    $window.location.reload();
+                }
+            }
+        ).catch(function(res){
+                $ionicLoading.hide();
+                $scope.errorMessageDialog(res)
+            })
+    }
+})
