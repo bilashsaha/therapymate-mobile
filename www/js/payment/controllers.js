@@ -38,8 +38,6 @@ angular.module('payment.controllers', [])
         $scope.cardTypes = [];
         $scope.patient_new_payment_method = {"patient_new_payment_method":{}}
 
-
-        $scope.stripe = Stripe($scope.access.stripe_publishable_api_key);
         var style = {
           base: {
             color: '#32325d',
@@ -55,14 +53,20 @@ angular.module('payment.controllers', [])
             iconColor: '#fa755a'
           }
         };
-        var elements = $scope.stripe.elements();
-        $scope.card = elements.create('card', {style: style});
 
+        if ($scope.access.stripe_publishable_api_key) {
+          console.log($scope.access.stripe_publishable_api_key)
+          $scope.stripe = Stripe($scope.access.stripe_publishable_api_key);
+          var elements = $scope.stripe.elements();
+          $scope.card = elements.create('card', {style: style});
+        }
 
         $ionicLoading.show();
         $http.get(apiHost + "api/app/payments/new.json?"+$scope.query_access).then(function (response) {
                 $scope.newPaymentSetting = response.data;
-                $scope.card.mount('#new_card');
+                if($scope.stripe) {
+                  $scope.card.mount('#new_card');
+                }
                 $ionicLoading.hide()
             },
             function (err) {
