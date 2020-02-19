@@ -17,7 +17,7 @@ var app = angular.module('starter',
         'ui.mask'
     ])
 
-    .run(function ($ionicPlatform,$ionicPopup) {
+    .run(function ($ionicPlatform,$ionicPopup,$rootScope,$ionicLoading) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -57,6 +57,13 @@ alert("Error");
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
             }
+        });
+        $rootScope.$on('loading:show', function() {
+          $ionicLoading.show({template: '<ion-spinner></ion-spinner>'})
+        });
+
+        $rootScope.$on('loading:hide', function() {
+          $ionicLoading.hide()
         });
     })
 
@@ -211,8 +218,23 @@ alert("Error");
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/app/login');
         $ionicConfigProvider.backButton.previousTitleText(false);
-    });
+    })
 
-var apiHost = 'https://www.therapymate.com/';
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push(function($rootScope) {
+    return {
+      request: function(config) {
+        $rootScope.$broadcast('loading:show');
+        return config
+      },
+      response: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      }
+    }
+  })})
+;
+
+//var apiHost = 'https://www.therapymate.com/';
 //var apiHost = 'https://therapymate.org/';
-//var apiHost = 'http://192.168.0.105:3000/';
+var apiHost = 'http://192.168.0.106:3000/';
