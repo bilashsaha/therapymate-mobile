@@ -170,52 +170,6 @@ angular.module('appointment.controllers', [])
              $scope.endTimeOfDay = $scope.timeOfTheDay(date, endTimeOfDay)
            };
 
-
-          $scope.getOverlappedAppointment = function(appointment){
-            var scheduled_until = "";
-            if(appointment.frequency != "One Time"){
-              scheduled_until = appointment.scheduled_until;
-              scheduled_until = moment(scheduled_until).utc().format();
-            }
-
-            var start_at = moment(appointment.start_at).utc().format();
-            var end_at = moment(appointment.end_at).utc().format();
-
-            var existingAppointments = $.ajax({
-              type: "GET",
-              url: apiHost+"/api/app/appointments/overlapped?"+$scope.query_access+"&id="+appointment.id+"&clinician_id="+appointment.clinician_id+"&start_at="+start_at+"&end_at="+end_at+"&scheduled_until="+scheduled_until+"&frequency="+appointment.frequency,
-              async: false
-            }).responseText;
-
-
-            return JSON.parse(existingAppointments)['appointments'][0];
-          },
-
-            $scope.handleOverlappedAppointment = function(appointment){
-            if(appointment.patient_id == null && appointment.therapy_group_id == null) {
-              return true
-            }
-
-            console.log("1st time ")
-           // console.log(appointment)
-
-            var existingAppointment = $scope.getOverlappedAppointment(appointment);
-
-              console.log(existingAppointment)
-
-            if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
-              alert("You already have an appointment for this date and time at a different location.");
-              return false;
-            }
-            if(existingAppointment && (existingAppointment.location_id == appointment.location_id || !appointment.location_id)){
-              return confirm("You already have an appointment for this date and time at this location. Still want to proceed?");
-            }
-            return true;
-          },
-
-
-
-
         $scope.createAppointment = function(){
 
               var calenderEvent = $scope.isCalenderEvent
@@ -494,44 +448,6 @@ angular.module('appointment.controllers', [])
       $scope.endTimeOfDay = $scope.timeOfTheDay(date, endTimeOfDay)
     };
 
-  $scope.getOverlappedAppointment = function(appointment){
-    var scheduled_until = "";
-    if(appointment.frequency != "One Time"){
-      scheduled_until = appointment.scheduled_until;
-      scheduled_until = moment(scheduled_until).utc().format();
-    }
-
-    var start_at = moment(appointment.start_at).utc().format();
-    var end_at = moment(appointment.end_at).utc().format();
-
-    var existingAppointments = $.ajax({
-      type: "GET",
-      url: apiHost+"/api/app/appointments/overlapped?"+$scope.query_access+"&id="+appointment.id+"&clinician_id="+appointment.clinician_id+"&start_at="+start_at+"&end_at="+end_at+"&scheduled_until="+scheduled_until+"&frequency="+appointment.frequency,
-      async: false
-    }).responseText;
-
-    $ionicLoading.hide()
-
-    return JSON.parse(existingAppointments)['appointments'][0];
-  },
-
-    $scope.handleOverlappedAppointment = function(appointment){
-      if(appointment.patient_id == null && appointment.therapy_group_id == null) {
-        return true
-      }
-      console.log("2st time ")
-      var existingAppointment = $scope.getOverlappedAppointment(appointment);
-
-      if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
-        alert("You already have an appointment for this date and time at a different location.");
-        return false;
-      }
-      if(existingAppointment && (existingAppointment.location_id == appointment.location_id || !appointment.location_id)){
-        return confirm("You already have an appointment for this date and time at this location. Still want to proceed?");
-      }
-      return true;
-    },
-
 
     $scope.updateAppointment = function(){
 
@@ -571,26 +487,80 @@ angular.module('appointment.controllers', [])
         return false;
       }
 
-      if(!$scope.handleOverlappedAppointment(appointment)){
-        return false;
+
+      //**************************************************sync ajax fix************************//
+
+      if(appointment.patient_id == null && appointment.therapy_group_id == null) {
+        return true
       }
 
+      //var existingAppointment = $scope.getOverlappedAppointment(appointment);
+      var scheduled_until = "";
+      if(appointment.frequency != "One Time"){
+        scheduled_until = appointment.scheduled_until;
+        scheduled_until = moment(scheduled_until).utc().format();
+      }
 
-
-        var access = JSON.parse(localStorage.getItem('access'));
-        $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
-        .then(
-            function(res) {
-                if(res.data){
-
-                    $window.location.href = "#/app/appointments";
-                    $window.location.reload();
-                }
+      var start_at = moment(appointment.start_at).utc().format();
+      var end_at = moment(appointment.end_at).utc().format();
+      var access = JSON.parse(localStorage.getItem('access'));
+      $http({
+        method: 'GET',
+        url: apiHost+"/api/app/appointments/overlapped?"+$scope.query_access+"&id="+appointment.id+"&clinician_id="+appointment.clinician_id+"&start_at="+start_at+"&end_at="+end_at+"&scheduled_until="+scheduled_until+"&frequency="+appointment.frequency,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      }).then(
+        function(res) {
+          if(res.data){
+            var existingAppointment = res.data['appointments'][0];
+            console.log(existingAppointment);
+            if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
+              alert("You already have an appointment for this date and time at a different location.");
+              return false;
             }
-        ).catch(function(res){
+            else if(existingAppointment && (existingAppointment.location_id == appointment.location_id || !appointment.location_id)){
+              res =  confirm("You already have an appointment for this date and time at this location. Still want to proceed?");
+              if(res) {
+                $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+                  .then(
+                    function(res) {
+                      if(res.data){
+                        alert("Appointment Updated Successfully")
+                        $window.location.href = "#/app/appointments";
+                        $window.location.reload();
+                      }
+                    }
+                  ).catch(function(res){
 
+                  $scope.errorMessageDialog(res)
+                })
+              }
+              else {
+                return false;
+              }
+            }
+            else {
+              $http.put(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access,$httpParamSerializerJQLike($scope.appointment), { headers: {'Content-Type': 'application/x-www-form-urlencoded' }})
+                .then(
+                  function(res) {
+                    if(res.data){
+                      alert("Appointment Updated Successfully")
+                      $window.location.href = "#/app/appointments";
+                      $window.location.reload();
+                    }
+                  }
+                ).catch(function(res){
                 $scope.errorMessageDialog(res)
-            })
+              })
+            }
+          }
+        }
+      ).catch(function(res){
+        $scope.errorMessageDialog(res)
+      })
+
+
+      //var existingAppointment = $scope.getOverlappedAppointment(appointment);
+      //**************************************************sync ajax fix************************//
 
     };
 

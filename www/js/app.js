@@ -230,11 +230,20 @@ alert("Error");
       response: function(response) {
         $rootScope.$broadcast('loading:hide');
         return response
-      }
+      },
+      requestError: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      },
+      responseError: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      },
+
     }
   })})
 ;
 
 //var apiHost = 'https://www.therapymate.com/';
-//var apiHost = 'https://therapymate.org/';
-var apiHost = 'http://192.168.0.106:3000/';
+var apiHost = 'https://therapymate.org/';
+//var apiHost = 'http://192.168.0.106:3000/';
