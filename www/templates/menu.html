@@ -44,13 +44,21 @@
           <i class="icon ion-ios-time"></i>
           New Appointment
         </ion-item>
+        <ion-item ng-if="access != null" menu-close href="#/app/patients">
+          <i class="icon ion-ios-people"></i>
+          Clients
+        </ion-item>
         <ion-item ng-if="access != null" menu-close href="#/app/patients/new">
           <i class="icon ion-person-add"></i>
           New Client
         </ion-item>
-        <ion-item ng-if="access != null" menu-close href="#/app/patients">
-          <i class="icon ion-ios-people"></i>
-          Clients
+        <ion-item ng-if="access != null" menu-close href="#/app/payments">
+          <i class="icon ion-cash"></i>
+          Payments
+        </ion-item>
+        <ion-item ng-if="access != null" menu-close href="#/app/payments/new">
+          <i class="icon ion-person-add"></i>
+          New payment
         </ion-item>
         <ion-item menu-close ng-click="showVersion()">
           <i class="icon ion-information-circled"></i>

@@ -1,0 +1,80 @@
+<ion-view view-title='<img class="title-image" style="height: 45px" src="img/logo.png" />'>
+
+  <ion-content>
+    <label class="item">
+      <strong>Payment Details </strong>
+    </label>
+    <ion-item>
+          <label class="item item-input">
+            <span class="input-label">
+               Date
+            </span>
+            <span>{{payment.payment.payment_date}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+              Clinician
+            </span>
+            <span>{{payment.payment.clinician.name}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+              Patient
+            </span>
+            <span>{{payment.payment.patient.name}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+               Class
+            </span>
+            <span>{{payment.payment.payment_class_name}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+               Type
+            </span>
+            <span>{{payment.payment.payment_type_name}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+             Amount
+            </span>
+            <span>{{payment.payment.amount}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+              Number
+            </span>
+            <span>{{payment.payment.payment_number}}</span>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">
+             Memo
+            </span>
+            <span>{{payment.payment.memo}}</span>
+          </label>
+    </ion-item>
+
+    <ion-item>
+      <label class="item item-input">
+        <table width="99%" style="margin: 0 auto">
+          <thead>
+          <tr style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0; font-weight: bold">
+            <th class="patient_header" style="text-align: left">Date</th>
+            <th class="patient_header"  style="text-align: left">Invoice#</th>
+            <th class="patient_header"  style="text-align: left">Amount</th>
+          </tr>
+          </thead>
+          <tr ng-repeat="invoice in payment.payment.invoices" style="border-bottom: 1px solid #DADADA;padding: 6px 0 6px 0">
+            <td>{{invoice.service_date}}</td>
+            <td>{{invoice.invoice_number}}</td>
+            <td>{{invoice.event_amount}}</td>
+          </tr>
+        </table>
+      </label>
+
+    </ion-item>
+
+
+  </ion-content>
+</ion-view>

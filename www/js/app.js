@@ -13,10 +13,11 @@ var app = angular.module('starter',
         'appointment.controllers',
         'login.controllers',
         'patient.controllers',
+        'payment.controllers',
         'ui.mask'
     ])
 
-    .run(function ($ionicPlatform,$ionicPopup) {
+    .run(function ($ionicPlatform,$ionicPopup,$rootScope,$ionicLoading) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -57,6 +58,13 @@ alert("Error");
                 StatusBar.styleDefault();
             }
         });
+        $rootScope.$on('loading:show', function() {
+          $ionicLoading.show({template: '<ion-spinner></ion-spinner>'})
+        });
+
+        $rootScope.$on('loading:hide', function() {
+          $ionicLoading.hide()
+        });
     })
 
     .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
@@ -87,6 +95,39 @@ alert("Error");
                     }
                 }
             })
+
+            .state('app.payments', {
+              url: '/payments',
+              views: {
+                'menuContent': {
+                  templateUrl: 'templates/payment/payments.html',
+                  controller: 'PaymentsCtrl'
+                }
+              }
+            })
+
+          .state('app.new_payment', {
+            url: '/payments/new',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/payment/new.html',
+                controller: 'NewPaymentCtrl'
+              }
+            }
+          })
+
+
+          .state('app.show_payments', {
+            url: '/payments/:id',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/payment/show.html',
+                controller: 'ShowPaymentCtrl'
+              }
+            }
+          })
+
+
 
             .state('app.patients', {
                 url: '/patients',
@@ -177,9 +218,32 @@ alert("Error");
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/app/login');
         $ionicConfigProvider.backButton.previousTitleText(false);
-    });
+    })
+
+  .config(function($httpProvider) {
+    $httpProvider.interceptors.push(function($rootScope) {
+    return {
+      request: function(config) {
+        $rootScope.$broadcast('loading:show');
+        return config
+      },
+      response: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      },
+      requestError: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      },
+      responseError: function(response) {
+        $rootScope.$broadcast('loading:hide');
+        return response
+      },
+
+    }
+  })})
+;
 
 //var apiHost = 'https://www.therapymate.com/';
-//var apiHost = 'https://therapymate-staging.herokuapp.com/';
-//var apiHost = 'https://therapymate.net/';
-var apiHost = 'http://192.168.0.112:3000/';
+var apiHost = 'https://therapymate.org/';
+//var apiHost = 'http://192.168.0.106:3000/';
