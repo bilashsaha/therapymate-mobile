@@ -45,8 +45,6 @@ angular.module('appointment.controllers', [])
 
             console.log($scope.is_active)
 
-
-
                 $('#calendar').fullCalendar({
                     header: false,
                     footer: false,
@@ -128,6 +126,10 @@ angular.module('appointment.controllers', [])
         $scope.appointment.appointment.units = 1;
         $scope.appointment.appointment.start_time = new Date("1970-01-01 "+(new Date().getHours()+1)+":00:00");
         $scope.appointment.appointment.procedure_code_modifier_id = null;
+        $scope.appointment.appointment.email_reminder = false;
+        $scope.appointment.appointment.text_reminder = false;
+        $scope.can_email_patient = false
+        $scope.can_text_patient = false
 
         if (typeof $location.search().date == 'undefined'){
             $scope.date =  moment(new Date()).format("YYYY-MM-DD")
@@ -173,6 +175,8 @@ angular.module('appointment.controllers', [])
         $scope.createAppointment = function(){
 
               var calenderEvent = $scope.isCalenderEvent
+              $scope.appointment.appointment.text_reminder = $scope.appointment.appointment.text_reminder && $scope.can_text_patient
+              $scope.appointment.appointment.email_reminder = $scope.appointment.appointment.email_reminder && $scope.can_email_patient
               var appointment = jQuery.extend(true, {}, $scope.appointment.appointment)
 
               if ($scope.checkAppointmentErrors(appointment,calenderEvent)) {
@@ -351,13 +355,14 @@ angular.module('appointment.controllers', [])
                     if ($scope.display_procedure_code_modifiers) {
                       $scope.appointment.appointment.procedure_code_modifier_id = $scope.newAppointmentSetting.clinicians[i].default_procedure_code_modifier_id
                     }
+                  $scope.appointment.appointment.email_reminder = $scope.newAppointmentSetting.clinicians[i].default_email_reminder;
+                  $scope.appointment.appointment.text_reminder = $scope.newAppointmentSetting.clinicians[i].default_text_reminder;
                   break;
                 }
             }
         }
 
         $scope.getPayer = function(){
-
 
             $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
                     var patient_providers = response.data.patient_providers;
@@ -376,6 +381,15 @@ angular.module('appointment.controllers', [])
                     $scope.errorMessageDialog(err);
                 }
             );
+
+          for(var i in $scope.newAppointmentSetting.patients)
+          {
+            if($scope.newAppointmentSetting.patients[i].id == $scope.appointment.appointment.patient_id){
+              $scope.can_email_patient = $scope.newAppointmentSetting.patients[i].email_reminder
+              $scope.can_text_patient = $scope.newAppointmentSetting.patients[i].text_reminder
+              break;
+            }
+          }
         }
 
         $scope.startTimeChanged = function(startTime){
@@ -409,13 +423,14 @@ angular.module('appointment.controllers', [])
     $scope.choice = {"val":"A"};
 
     $scope.procedure_code_modifiers = [];
+    $scope.can_email_patient = false
+    $scope.can_text_patient = false
 
 
 
     $http.get(apiHost+"api/app/appointments/"+$stateParams.id+".json?"+$scope.query_access).then(function (response) {
             $scope.newAppointmentSetting = response.data;
             response.data.appointment.start_at = moment(response.data.appointment.start_at).local().toDate();
-            console.log(response.data.appointment.start_at)
             response.data.appointment.start_time = new Date(response.data.appointment.start_time);
             response.data.appointment.end_time = new Date(response.data.appointment.end_time);
             response.data.appointment.scheduled_until = new Date(response.data.appointment.scheduled_until);
@@ -452,6 +467,9 @@ angular.module('appointment.controllers', [])
     $scope.updateAppointment = function(){
 
       var calenderEvent = $scope.isCalenderEvent
+      $scope.appointment.appointment.text_reminder = $scope.appointment.appointment.text_reminder && $scope.can_text_patient
+      $scope.appointment.appointment.email_reminder = $scope.appointment.appointment.email_reminder && $scope.can_email_patient
+
       var appointment = jQuery.extend(true, {}, $scope.appointment.appointment)
 
       if ($scope.checkAppointmentErrors(appointment,calenderEvent)) {
@@ -511,8 +529,10 @@ angular.module('appointment.controllers', [])
       }).then(
         function(res) {
           if(res.data){
-            var existingAppointment = res.data['appointments'][0];
-            console.log(existingAppointment);
+            var allExisting = res.data['appointments'].filter(function(appt, index, arr){
+              return appt.id ==  $scope.appointment.id;
+            });
+            var existingAppointment = allExisting[0];
             if(existingAppointment && appointment.location_id && existingAppointment.location_id != appointment.location_id){
               alert("You already have an appointment for this date and time at a different location.");
               return false;
@@ -695,7 +715,6 @@ angular.module('appointment.controllers', [])
 
     $scope.getPayer = function(){
         if($scope.appointment.appointment.patient_id != null) {
-
         $http.get(apiHost+"/api/app/patient_providers.json?patient_id="+$scope.appointment.appointment.patient_id+"&"+$scope.query_access).then(function (response) {
                 var patient_providers = response.data.patient_providers;
                 if(patient_providers.length > 0){
@@ -713,6 +732,16 @@ angular.module('appointment.controllers', [])
                 $scope.errorMessageDialog(err);
             }
         );
+
+          for(var i in $scope.newAppointmentSetting.patients)
+          {
+            if($scope.newAppointmentSetting.patients[i].id == $scope.appointment.appointment.patient_id){
+              $scope.can_email_patient = $scope.newAppointmentSetting.patients[i].email_reminder
+              $scope.can_text_patient = $scope.newAppointmentSetting.patients[i].text_reminder
+              break;
+            }
+          }
+
         }
     }
 

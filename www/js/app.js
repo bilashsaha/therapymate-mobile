@@ -234,11 +234,7 @@ alert("Error");
       requestError: function(response) {
         $rootScope.$broadcast('loading:hide');
         return response
-      },
-      responseError: function(response) {
-        $rootScope.$broadcast('loading:hide');
-        return response
-      },
+      }
 
     }
   })})
@@ -246,4 +242,5 @@ alert("Error");
 
 //var apiHost = 'https://www.therapymate.com/';
 var apiHost = 'https://therapymate.org/';
-//var apiHost = 'http://192.168.0.106:3000/';
+//var apiHost = 'http://192.168.0.112:3000/';
+

@@ -135,11 +135,11 @@
           <input type="date" ng-model="appointment.appointment.scheduled_until">
         </label>
 
-        <ion-checkbox ng-model="appointment.appointment.email_reminder" ng-if="!isCalenderEvent">
+        <ion-checkbox ng-model="appointment.appointment.email_reminder" ng-if="(!isCalenderEvent && can_email_patient)">
           <i class="icon ion-email"></i>
           Email Reminder
         </ion-checkbox>
-        <ion-checkbox ng-model="appointment.appointment.text_reminder" ng-if="!isCalenderEvent">
+        <ion-checkbox ng-model="appointment.appointment.text_reminder" ng-if="(!isCalenderEvent && can_text_patient)">
           <i class="icon ion-android-textsms"></i>
           Text Reminder
         </ion-checkbox>
