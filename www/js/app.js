@@ -240,7 +240,7 @@ alert("Error");
   })})
 ;
 
-//var apiHost = 'https://www.therapymate.com/';
-var apiHost = 'https://therapymate.org/';
+var apiHost = 'https://www.therapymate.com/';
+//var apiHost = 'https://therapymate.org/';
 //var apiHost = 'http://192.168.0.112:3000/';
 
