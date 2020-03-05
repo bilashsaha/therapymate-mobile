@@ -209,9 +209,7 @@ angular.module('appointment.controllers', [])
 
               //**************************************************sync ajax fix************************//
 
-              if(appointment.patient_id == null && appointment.therapy_group_id == null) {
-                return true
-              }
+
 
               //var existingAppointment = $scope.getOverlappedAppointment(appointment);
               var scheduled_until = "";
@@ -292,7 +290,7 @@ angular.module('appointment.controllers', [])
 
         $scope.checkAppointmentErrors = function(appointment,calenderEvent) {
          $scope.errorMessages = []
-         if(appointment.clinician_id == null && !calenderEvent) {
+         if(appointment.clinician_id == null ) {
            $scope.errorMessages.push("Must Select a Clinician")
          }
          if(appointment.patient_id == null && !calenderEvent) {
@@ -508,10 +506,6 @@ angular.module('appointment.controllers', [])
 
       //**************************************************sync ajax fix************************//
 
-      if(appointment.patient_id == null && appointment.therapy_group_id == null) {
-        return true
-      }
-
       //var existingAppointment = $scope.getOverlappedAppointment(appointment);
       var scheduled_until = "";
       if(appointment.frequency != "One Time"){
@@ -584,12 +578,12 @@ angular.module('appointment.controllers', [])
 
     };
 
-    $scope.checkAppointmentErrors = function(appointment) {
+    $scope.checkAppointmentErrors = function(appointment,calenderEvent) {
        $scope.errorMessages = []
        if(appointment.clinician_id == null) {
          $scope.errorMessages.push("Must Select a Clinician")
        }
-       if(appointment.patient_id == null) {
+       if(appointment.patient_id == null && !calenderEvent) {
          $scope.errorMessages.push("Must Select a Client")
        }
       if($scope.display_procedure_code_modifiers && appointment.procedure_code_modifier_id == null) {
