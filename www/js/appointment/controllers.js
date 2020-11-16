@@ -296,9 +296,6 @@ angular.module('appointment.controllers', [])
          if(appointment.patient_id == null && !calenderEvent) {
            $scope.errorMessages.push("Must Select a Client")
          }
-         if($scope.display_procedure_code_modifiers && appointment.procedure_code_modifier_id == null) {
-           $scope.errorMessages.push("Must Select a Code Modifier")
-          }
          if(appointment.service_code_id == null) {
            $scope.errorMessages.push("Must Select a Type")
          }
@@ -586,9 +583,6 @@ angular.module('appointment.controllers', [])
        if(appointment.patient_id == null && !calenderEvent) {
          $scope.errorMessages.push("Must Select a Client")
        }
-      if($scope.display_procedure_code_modifiers && appointment.procedure_code_modifier_id == null) {
-        $scope.errorMessages.push("Must Select a Code Modifier")
-      }
        if(appointment.service_code_id == null) {
          $scope.errorMessages.push("Must Select a Type")
        }
